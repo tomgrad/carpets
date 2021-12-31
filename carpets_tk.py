@@ -37,7 +37,9 @@ def carpet(ecg, sampling_rate, start_sample=0, beats=H, left_off=W//2, right_off
     r_first, r_last = rpeaks['ECG_R_Peaks'][0], rpeaks['ECG_R_Peaks'][beats]
     samples_range = (r_first-left_off+start_sample,
                      r_last+right_off+start_sample)
+    return np.stack(result), rpeaks['ECG_R_Peaks'][0:beats]
     return np.stack(result), samples_range
+    
 
 
 class App(tk.Tk):
@@ -69,7 +71,7 @@ class App(tk.Tk):
             ecg_window = tk.Toplevel()
             fig = Figure(figsize=(6, 2))
             ax = fig.add_subplot()
-            fig.tight_layout()
+            # fig.tight_layout()
             canvas = FigureCanvasTkAgg(fig, master=ecg_window)
             canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
             ax.plot(self.ecg)
@@ -184,9 +186,10 @@ class App(tk.Tk):
         self.canvas_ecg.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
     def make_carpet(self):
-        self.carpet, (self.s_min, self.s_max) = carpet(self.ecg, sampling_rate=self.var_sampling_rate.get(), start_sample=self.var_pos.get(), beats=H,
+        pos=self.var_pos.get()
+        self.carpet, self.rpeaks = carpet(self.ecg, sampling_rate=self.var_sampling_rate.get(), start_sample=pos, beats=H,
                                                        left_off=W//2, right_off=W//2, method=self.var_method.get())
-        self.cmean, self.cstdev = self.carpet.mean(), self.carpet.std()
+        self.s_min, self.s_max = self.rpeaks[0]+pos, self.rpeaks[-1]+pos
         v_min = self.ecg[self.s_min:self.s_max].min()
         v_max = self.ecg[self.s_min:self.s_max].max()
 
@@ -213,13 +216,12 @@ class App(tk.Tk):
         
         self.var_sampling_rate.set(sampling_freq)
         self.filename=fn
+        self.label_filename.config(
+            text=f"{self.filename} {self.ecg.shape[0]} samples")
 
         self.ecg = nk.ecg_clean(self.ecg, sampling_rate=self.var_sampling_rate.get())
         self.var_pos.set(W) # bug when 0
         self.make_carpet()
-        print(f"Number of samples: {self.ecg.shape[0]}")
-        self.label_filename.config(
-            text=f"{self.filename} {self.ecg.shape[0]} samples")
         self.draw_ecg()
         self.draw()
 
@@ -239,7 +241,9 @@ class App(tk.Tk):
 
             c_im = self.ax.imshow(
                 self.carpet, cmap=cmap, extent=[-t_ext, t_ext, H, 0], aspect='auto', vmin=vmin, vmax=vmax)
-            
+        skip=20
+        labels=np.round((self.rpeaks[::skip]-self.rpeaks[0])/self.var_sampling_rate.get(), decimals=1)
+        self.ax.set_yticks(ticks=np.arange(0,H,skip), labels=labels)
         self.canvas_carpet.draw()
 
     def draw_ecg(self):
