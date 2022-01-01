@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import os
+from datetime import datetime, timedelta
 
 from ishneholterlib import Holter
 import wfdb
@@ -19,14 +20,18 @@ H=512
 def load_ishne(filename):
     record = Holter(filename)
     print(record.__dict__)
-
     record.load_data()
-    return record.lead[0].data, record.sr
+    dt = datetime(record.record_date.year, record.record_date.month, record.record_date.day, record.start_time.hour, record.start_time.minute)
+    return record.lead[0].data, record.sr, dt
 
 def load_mit(filename):
     record=wfdb.rdrecord(filename[:-4])
     print(record.__dict__)
-    return record.p_signal[:,0], record.fs
+    try:
+        dt = datetime(year=1980, month=5, day=2, hour=record.base_time.hour, minute=record.base_time.minute, second=record.base_time.second)
+    except:
+        dt = datetime(year=1980, month=5, day=2, hour=12,minute=0)
+    return record.p_signal[:,0], record.fs, dt
 
 def carpet(ecg, sampling_rate, start_sample=0, beats=H, left_off=W//2, right_off=W//2, method='neurokit'):
     # R-wave detection for a buffer, assuming <RR> < 2s
@@ -71,7 +76,7 @@ class App(tk.Tk):
             ecg_window = tk.Toplevel()
             fig = Figure(figsize=(6, 2))
             ax = fig.add_subplot()
-            # fig.tight_layout()
+            fig.tight_layout()
             canvas = FigureCanvasTkAgg(fig, master=ecg_window)
             canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
             ax.plot(self.ecg)
@@ -82,7 +87,6 @@ class App(tk.Tk):
 
         self.var_cmap = tk.StringVar(value='jet')
         self.var_method = tk.StringVar(value='neurokit')
-        self.var_sampling_rate = tk.IntVar(value=200)
         self.var_pos = tk.IntVar(value=1000)
         self.var_auto = tk.BooleanVar(value=True)
         self.var_range = tk.DoubleVar(value='1.0')
@@ -97,7 +101,6 @@ class App(tk.Tk):
 
     # labels
         self.label_filename = tk.Label(rightframe, text="filename")
-        # label_sampling_rate = tk.Label(rightframe, text="sampling rate")        
         label_cmap = tk.Label(rightframe, text="colormap")
         label_method = tk.Label(rightframe, text="R-wave detection method")
         label_pos = tk.Label(rightframe, text='index')
@@ -117,9 +120,10 @@ class App(tk.Tk):
 
     # figures
 
-        self.fig = Figure(figsize=(6, 6))
+        self.fig = Figure(figsize=(6.7, 6))
         self.ax = self.fig.add_subplot()
         self.fig.tight_layout()
+        # self.fig.subplots_adjust(left=0.12)
 
 
         self.fig_ecg, self.axs_ecg = plt.subplots(2, 1, figsize=(5, 3))
@@ -143,7 +147,6 @@ class App(tk.Tk):
                                   'elgendi2010', 'engzeemod2012', 'kalidas2017', 'martinez2003', 'rodrigues2021', 'promac']
         combo_method['state'] = 'readonly'
 
-        # spinbox_sampling_rate = ttk.Spinbox(rightframe, from_=50, to=1000, increment=25, textvariable=self.var_sampling_rate)
 
         spinbox_pos = ttk.Spinbox(
             rightframe, from_=W, to=20000000, increment=200*60*10, textvariable=self.var_pos)
@@ -162,8 +165,6 @@ class App(tk.Tk):
         rightframe.pack(side=tk.RIGHT)
         self.canvas_carpet.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
         self.label_filename.pack()
-        # label_sampling_rate.pack()
-        # spinbox_sampling_rate.pack()
         button_open.pack()
         button_show_ecg.pack()        
         label_pos.pack()
@@ -187,7 +188,7 @@ class App(tk.Tk):
 
     def make_carpet(self):
         pos=self.var_pos.get()
-        self.carpet, self.rpeaks = carpet(self.ecg, sampling_rate=self.var_sampling_rate.get(), start_sample=pos, beats=H,
+        self.carpet, self.rpeaks = carpet(self.ecg, sampling_rate=self.sampling_rate, start_sample=pos, beats=H,
                                                        left_off=W//2, right_off=W//2, method=self.var_method.get())
         self.s_min, self.s_max = self.rpeaks[0]+pos, self.rpeaks[-1]+pos
         v_min = self.ecg[self.s_min:self.s_max].min()
@@ -208,18 +209,17 @@ class App(tk.Tk):
 
         file_ext=fn[-3:]
         if file_ext=='ecg':
-            self.ecg, sampling_freq = load_ishne(fn)
+            self.ecg, self.sampling_rate, self.datetime = load_ishne(fn)
         elif file_ext=='hea':
-            self.ecg, sampling_freq = load_mit(fn)
+            self.ecg, self.sampling_rate, self.datetime = load_mit(fn)
         else:
             return
         
-        self.var_sampling_rate.set(sampling_freq)
         self.filename=fn
         self.label_filename.config(
             text=f"{self.filename} {self.ecg.shape[0]} samples")
 
-        self.ecg = nk.ecg_clean(self.ecg, sampling_rate=self.var_sampling_rate.get())
+        self.ecg = nk.ecg_clean(self.ecg, sampling_rate=self.sampling_rate)
         self.var_pos.set(W) # bug when 0
         self.make_carpet()
         self.draw_ecg()
@@ -230,19 +230,24 @@ class App(tk.Tk):
             self.make_carpet()
             self.need_update = False
             self.draw_ecg()
-        t_ext = W/self.var_sampling_rate.get()
+        t_ext = W/self.sampling_rate
         cmap = plt.get_cmap(self.var_cmap.get())
         if self.var_auto.get():
-            c_im = self.ax.imshow(self.carpet, cmap=cmap, extent=[-t_ext, t_ext, H, 0], aspect='auto')
+            # c_im = self.ax.imshow(self.carpet, cmap=cmap, extent=[-t_ext, t_ext, -t_ext, t_ext], aspect='equal')
+            c_im = self.ax.imshow(self.carpet, cmap=cmap, aspect='equal')
+
         else:
             sigma = self.var_range.get()
             vmin = self.var_range_min.get()
             vmax = self.var_range_max.get()
 
             c_im = self.ax.imshow(
-                self.carpet, cmap=cmap, extent=[-t_ext, t_ext, H, 0], aspect='auto', vmin=vmin, vmax=vmax)
-        skip=20
-        labels=np.round((self.rpeaks[::skip]-self.rpeaks[0])/self.var_sampling_rate.get(), decimals=1)
+                self.carpet, cmap=cmap, aspect='equal', vmin=vmin, vmax=vmax)
+        skip=32
+        seconds=(self.rpeaks[::skip]-self.rpeaks[0]+self.var_pos.get())/self.sampling_rate
+        labels=[(self.datetime+timedelta(seconds=s)).strftime("%H:%M:%S") for s in seconds]
+        # sec = 1/self.sampling_rate
+        self.ax.set_xticks(ticks=[W//2 + i*self.sampling_rate for i in [-1, -0.5, 0, 0.5, 1]], labels=["-1s", "-0.5s", 0, "+0.5s", "+1s"])
         self.ax.set_yticks(ticks=np.arange(0,H,skip), labels=labels)
         self.canvas_carpet.draw()
 
