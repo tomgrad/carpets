@@ -198,6 +198,7 @@ class App(tk.Tk):
 
     def file_open(self):
         fn=fd.askopenfilename(filetypes=(
+            ('ECG files', '*.ecg *.hea'),
             ('Ishne ECG', '*.ecg'),
             ('MIT ECG', '*.hea'),
             ('All files', '*.*'),
