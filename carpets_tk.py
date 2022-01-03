@@ -8,14 +8,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 
 from ishneholterlib import Holter
 import wfdb
 import neurokit2 as nk
 
 W=512
-H=512
+H=601
 
 def load_ishne(filename):
     record = Holter(filename)
@@ -120,10 +120,10 @@ class App(tk.Tk):
 
     # figures
 
-        self.fig = Figure(figsize=(6.7, 6))
+        self.fig = Figure(figsize=(7, 6))
         self.ax = self.fig.add_subplot()
         self.fig.tight_layout()
-        # self.fig.subplots_adjust(left=0.12)
+        self.fig.subplots_adjust(left=0.12)
 
 
         self.fig_ecg, self.axs_ecg = plt.subplots(2, 1, figsize=(5, 3))
@@ -149,7 +149,7 @@ class App(tk.Tk):
 
 
         spinbox_pos = ttk.Spinbox(
-            rightframe, from_=W, to=20000000, increment=200*60*10, textvariable=self.var_pos)
+            rightframe, from_=W, to=20000000, increment=200*60*3, textvariable=self.var_pos)
 
         spinbox_range_min = ttk.Spinbox(
             rightframe, from_=-10, to=10, increment=0.05, textvariable=self.var_range_min, command=self.draw_ecg)
@@ -188,8 +188,11 @@ class App(tk.Tk):
 
     def make_carpet(self):
         pos=self.var_pos.get()
+        # left_off, right_off = W//2, W//2
+        self.left_off, self.right_off = self.sampling_rate, int(1.5*self.sampling_rate)
+        
         self.carpet, self.rpeaks = carpet(self.ecg, sampling_rate=self.sampling_rate, start_sample=pos, beats=H,
-                                                       left_off=W//2, right_off=W//2, method=self.var_method.get())
+                                                       left_off=self.left_off, right_off=self.right_off, method=self.var_method.get())
         self.s_min, self.s_max = self.rpeaks[0]+pos, self.rpeaks[-1]+pos
         v_min = self.ecg[self.s_min:self.s_max].min()
         v_max = self.ecg[self.s_min:self.s_max].max()
@@ -199,10 +202,11 @@ class App(tk.Tk):
 
     def file_open(self):
         fn=fd.askopenfilename(filetypes=(
-            ('All files', '*.*'),
             ('Ishne ECG', '*.ecg'),
-            ('MIT ECG', '*.hea')
-        ))  # initialdir='../data'
+            ('MIT ECG', '*.hea'),
+            ('All files', '*.*'),
+        ))
+        # , initialdir='Data/THEW/Healthy'))
 
         if fn=='':
             return
@@ -233,8 +237,7 @@ class App(tk.Tk):
         t_ext = W/self.sampling_rate
         cmap = plt.get_cmap(self.var_cmap.get())
         if self.var_auto.get():
-            # c_im = self.ax.imshow(self.carpet, cmap=cmap, extent=[-t_ext, t_ext, -t_ext, t_ext], aspect='equal')
-            c_im = self.ax.imshow(self.carpet, cmap=cmap, aspect='equal')
+            c_im = self.ax.imshow(self.carpet, cmap=cmap, aspect='auto')
 
         else:
             sigma = self.var_range.get()
@@ -242,12 +245,20 @@ class App(tk.Tk):
             vmax = self.var_range_max.get()
 
             c_im = self.ax.imshow(
-                self.carpet, cmap=cmap, aspect='equal', vmin=vmin, vmax=vmax)
-        skip=32
-        seconds=(self.rpeaks[::skip]-self.rpeaks[0]+self.var_pos.get())/self.sampling_rate
-        labels=[(self.datetime+timedelta(seconds=s)).strftime("%H:%M:%S") for s in seconds]
-        # sec = 1/self.sampling_rate
-        self.ax.set_xticks(ticks=[W//2 + i*self.sampling_rate for i in [-1, -0.5, 0, 0.5, 1]], labels=["-1s", "-0.5s", 0, "+0.5s", "+1s"])
+                self.carpet, cmap=cmap, aspect='auto', vmin=vmin, vmax=vmax)
+        skip=30
+        # seconds=(self.rpeaks[::skip]-self.rpeaks[0]+self.var_pos.get())/self.sampling_rate
+        seconds=(self.rpeaks[::skip]-self.rpeaks[0])/self.sampling_rate
+
+        # labels=[(self.datetime+timedelta(seconds=s)).strftime("%H:%M:%S") for s in seconds]
+        dummy_date = datetime(1980, 5, 2)
+        labels=[(dummy_date+timedelta(seconds=s)).strftime("+%M:%S") for s in seconds]
+        labels[0]=(self.datetime+timedelta(seconds=self.var_pos.get()/self.sampling_rate)).strftime("%H:%M:%S")
+        labels[-1]+=f"\n{H-1}RRs"
+
+        # self.ax.set_xticks(ticks=[W//2 + i*self.sampling_rate for i in [-1, -0.5, 0, 0.5, 1]], labels=["-1s", "-0.5s", 0, "+0.5s", "+1s"])
+        self.ax.set_xticks(ticks=[i*self.sampling_rate for i in [0, 0.5, 1, 1.5, 2, 2.5]], labels=["-1s", "-0.5s", 0, "+0.5s", "+1s", "+1.5s"])
+        
         self.ax.set_yticks(ticks=np.arange(0,H,skip), labels=labels)
         self.canvas_carpet.draw()
 
