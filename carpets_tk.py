@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import os
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
 
 from ishneholterlib import Holter
 import wfdb
@@ -43,15 +43,12 @@ def carpet(ecg, sampling_rate, start_sample=0, beats=H, left_off=W//2, right_off
     samples_range = (r_first-left_off+start_sample,
                      r_last+right_off+start_sample)
     return np.stack(result), rpeaks['ECG_R_Peaks'][0:beats]
-    return np.stack(result), samples_range
-    
 
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
         # self.tk.call('tk', 'scaling', 4.0)
-
 
         self.geometry("1860x1020")
         self.wm_title("Tk Carpets")
@@ -188,7 +185,6 @@ class App(tk.Tk):
 
     def make_carpet(self):
         pos=self.var_pos.get()
-        # left_off, right_off = W//2, W//2
         self.left_off, self.right_off = self.sampling_rate, int(1.5*self.sampling_rate)
         
         self.carpet, self.rpeaks = carpet(self.ecg, sampling_rate=self.sampling_rate, start_sample=pos, beats=H,
@@ -247,7 +243,6 @@ class App(tk.Tk):
             c_im = self.ax.imshow(
                 self.carpet, cmap=cmap, aspect='auto', vmin=vmin, vmax=vmax)
         skip=30
-        # seconds=(self.rpeaks[::skip]-self.rpeaks[0]+self.var_pos.get())/self.sampling_rate
         seconds=(self.rpeaks[::skip]-self.rpeaks[0])/self.sampling_rate
 
         # labels=[(self.datetime+timedelta(seconds=s)).strftime("%H:%M:%S") for s in seconds]
@@ -296,7 +291,6 @@ class App(tk.Tk):
         sfn = f"{fn}_{pos}.png"
         self.fig.savefig(sfn)
         print(f"File saved: {sfn}")
-
 
 app = App()
 app.mainloop()
