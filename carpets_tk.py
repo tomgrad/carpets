@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import os
+from os.path import exists
 from datetime import datetime, timedelta
 
 from ishneholterlib import Holter
@@ -17,21 +18,43 @@ import neurokit2 as nk
 W=512
 H=601
 
-def load_ishne(filename):
+def load_ishne(filename, with_ann=False):
     record = Holter(filename)
     print(record.__dict__)
     record.load_data()
     dt = datetime(record.record_date.year, record.record_date.month, record.record_date.day, record.start_time.hour, record.start_time.minute)
-    return record.lead[0].data, record.sr, dt
+    if with_ann:
+        record.load_ann()
+        ann_sample=[x['samp_num'] for x in record.beat_anns]
+        ann_symbol=[x['ann'] for x in record.beat_anns]
+        return record.lead[0].data, record.sr, dt, (ann_sample, ann_symbol)
+    return record.lead[0].data, record.sr, dt, None
 
-def load_mit(filename):
-    record=wfdb.rdrecord(filename[:-4])
+
+def load_mit(filename, with_ann=False):
+    base_fn=filename[:-4]
+    record=wfdb.rdrecord(base_fn)
     print(record.__dict__)
     try:
         dt = datetime(year=1980, month=5, day=2, hour=record.base_time.hour, minute=record.base_time.minute, second=record.base_time.second)
     except:
         dt = datetime(year=1980, month=5, day=2, hour=12,minute=0)
-    return record.p_signal[:,0], record.fs, dt
+    ann=None
+    if with_ann:
+        if exists(base_fn+'.atr'):
+            ann=wfdb.rdann(base_fn, "atr")
+        elif exists(base_fn+'.ari'):
+            ann=wfdb.rdann(base_fn, "ari")
+        elif exists(base_fn+'.qrs'):
+            ann=wfdb.rdann(base_fn, "qrs")
+        else:
+            ann=None
+
+    if ann:
+        return record.p_signal[:,0], record.fs, dt, (ann.sample, ann.symbol)
+    else:
+        return record.p_signal[:,0], record.fs, dt, None
+
 
 def carpet(ecg, sampling_rate, start_sample=0, beats=H, left_off=W//2, right_off=W//2, method='neurokit'):
     # R-wave detection for a buffer, assuming <RR> < 2s
@@ -80,12 +103,21 @@ class App(tk.Tk):
             ax.grid()
 
 
+        def show_ann():
+            print(f"Starting from index {self.var_pos.get()}")
+            print(self.ann[1][
+                next(i for i, smp in enumerate(self.ann[0]) if smp>self.s_min)-1:
+                next(i for i, smp in enumerate(self.ann[0]) if smp>self.s_max)
+                ])
+
+ 
     # variables
 
         self.var_cmap = tk.StringVar(value='jet')
         self.var_method = tk.StringVar(value='neurokit')
         self.var_pos = tk.IntVar(value=1000)
         self.var_auto = tk.BooleanVar(value=True)
+        self.var_ann = tk.BooleanVar(value=False)
         self.var_range = tk.DoubleVar(value='1.0')
         self.var_range_min = tk.DoubleVar()
         self.var_range_max = tk.DoubleVar()
@@ -107,8 +139,12 @@ class App(tk.Tk):
     # buttons
         button_open = tk.Button(
             rightframe, text="Open ECG file", command=self.file_open)
+
         button_show_ecg = tk.Button(
-            rightframe, text="Show ECG", command=show_lead)
+            rightframe, text="Show whole ECG", command=show_lead)
+
+        button_show_ann = tk.Button(
+            rightframe, text="Show annotations (console)", command=show_ann)
 
         button_update = tk.Button(
             rightframe, text="Update", command=self.draw)
@@ -156,6 +192,9 @@ class App(tk.Tk):
 
         check_auto = tk.Checkbutton(
             rightframe, text="autoscale", variable=self.var_auto)
+        check_ann = tk.Checkbutton(
+            rightframe, text="with annotations", variable=self.var_ann)
+
 
     # layout
         leftframe.pack(side=tk.LEFT)
@@ -163,7 +202,9 @@ class App(tk.Tk):
         self.canvas_carpet.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
         self.label_filename.pack()
         button_open.pack()
-        button_show_ecg.pack()        
+        check_ann.pack()
+        button_show_ecg.pack()  
+        button_show_ann.pack()      
         label_pos.pack()
         spinbox_pos.pack()
         label_method.pack()
@@ -210,9 +251,9 @@ class App(tk.Tk):
 
         file_ext=fn[-3:]
         if file_ext=='ecg':
-            self.ecg, self.sampling_rate, self.datetime = load_ishne(fn)
+            self.ecg, self.sampling_rate, self.datetime, self.ann = load_ishne(fn, self.var_ann.get())
         elif file_ext=='hea':
-            self.ecg, self.sampling_rate, self.datetime = load_mit(fn)
+            self.ecg, self.sampling_rate, self.datetime, self.ann = load_mit(fn, self.var_ann.get())
         else:
             return
         
@@ -225,6 +266,7 @@ class App(tk.Tk):
         self.make_carpet()
         self.draw_ecg()
         self.draw()
+
 
     def draw(self):
         if self.need_update:
