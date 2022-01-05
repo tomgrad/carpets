@@ -25,8 +25,15 @@ def load_ishne(filename, with_ann=False):
     dt = datetime(record.record_date.year, record.record_date.month, record.record_date.day, record.start_time.hour, record.start_time.minute)
     if with_ann:
         record.load_ann()
-        ann_sample=[x['samp_num'] for x in record.beat_anns]
+
+        # fix offset
+        _, rpeaks = nk.ecg_peaks(record.lead[0].data[:10000], sampling_rate=record.sr)
+        first_r_nk = rpeaks['ECG_R_Peaks'][0]
+        first_r_ann = record.beat_anns[0]['samp_num']
+
+        ann_sample=[x['samp_num']-first_r_ann+first_r_nk for x in record.beat_anns]
         ann_symbol=[x['ann'] for x in record.beat_anns]
+
         return record.lead[0].data, record.sr, dt, (ann_sample, ann_symbol)
     return record.lead[0].data, record.sr, dt, None
 
@@ -56,16 +63,21 @@ def load_mit(filename, with_ann=False):
         return record.p_signal[:,0], record.fs, dt, None
 
 
-def carpet(ecg, sampling_rate, start_sample=0, beats=H, left_off=W//2, right_off=W//2, method='neurokit'):
-    # R-wave detection for a buffer, assuming <RR> < 2s
-    _, rpeaks = nk.ecg_peaks(
-        ecg[start_sample:start_sample+sampling_rate*2*beats], sampling_rate=sampling_rate, method=method)
+def carpet(ecg, sampling_rate, start_sample=0, beats=H, left_off=W//2, right_off=W//2, method='neurokit', annotations=None):
+    if method=='annotations':
+        i=next(i for i, smp in enumerate(annotations[0]) if smp>start_sample)
+        rpeaks=[x-start_sample for x in annotations[0][i:i+beats+1]]
+    else:
+        # R-wave detection for a buffer, assuming <RR> < 2s
+        _, rpeaks = nk.ecg_peaks(
+            ecg[start_sample:start_sample+sampling_rate*2*beats], sampling_rate=sampling_rate, method=method)
+        rpeaks = rpeaks['ECG_R_Peaks']
     result = [ecg[r-left_off+start_sample:r+right_off+start_sample]
-              for r in rpeaks['ECG_R_Peaks'][:beats]]
-    r_first, r_last = rpeaks['ECG_R_Peaks'][0], rpeaks['ECG_R_Peaks'][beats]
+              for r in rpeaks[:beats]]
+    r_first, r_last = rpeaks[0], rpeaks[beats]
     samples_range = (r_first-left_off+start_sample,
                      r_last+right_off+start_sample)
-    return np.stack(result), rpeaks['ECG_R_Peaks'][0:beats]
+    return np.stack(result), rpeaks[0:beats]
 
 
 class App(tk.Tk):
@@ -176,7 +188,7 @@ class App(tk.Tk):
 
         combo_method = ttk.Combobox(
             rightframe, textvariable=self.var_method)
-        combo_method['values'] = ['neurokit', 'pantompkins1985', 'hamilton2002', 'christov2004', 'gamboa2008',
+        combo_method['values'] = ['neurokit', 'annotations', 'pantompkins1985', 'hamilton2002', 'christov2004', 'gamboa2008',
                                   'elgendi2010', 'engzeemod2012', 'kalidas2017', 'martinez2003', 'rodrigues2021', 'promac']
         combo_method['state'] = 'readonly'
 
@@ -228,8 +240,10 @@ class App(tk.Tk):
         pos=self.var_pos.get()
         self.left_off, self.right_off = self.sampling_rate, int(1.5*self.sampling_rate)
         
-        self.carpet, self.rpeaks = carpet(self.ecg, sampling_rate=self.sampling_rate, start_sample=pos, beats=H,
-                                                       left_off=self.left_off, right_off=self.right_off, method=self.var_method.get())
+        self.carpet, self.rpeaks = carpet(
+            self.ecg, sampling_rate=self.sampling_rate, start_sample=pos, beats=H,
+                                                       left_off=self.left_off, right_off=self.right_off, method=self.var_method.get(), 
+                                                       annotations=self.ann)
         self.s_min, self.s_max = self.rpeaks[0]+pos, self.rpeaks[-1]+pos
         v_min = self.ecg[self.s_min:self.s_max].min()
         v_max = self.ecg[self.s_min:self.s_max].max()
