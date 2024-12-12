@@ -71,8 +71,6 @@ class MainWindow(QMainWindow):
 
         self.ui.carpetView.setImage(image.T)
         self.ui.carpetView.setLevels(-3, 3)
-        ax = self.ui.carpetView.getAxis('bottom')
-
 
     def _open_file(self, filename=False):
         if filename is False:
@@ -112,20 +110,6 @@ class MainWindow(QMainWindow):
 
         
         self._update_lead()
-        
-        # t = np.arange(0, self.ecg.shape[1]) / self.sampling_rate
-
-        # self.ui.signalView.clear()
-        # self.ui.signalView.plot(t, self.ecg[self.lead])
-
-        # left_off = self.sampling_rate
-        # right_off = 3*self.sampling_rate//2
-        # image, _ = utils.make_carpet(self.ecg[self.lead], self.rpeaks, first_r=1, beats=len(
-        #     self.rpeaks)-5, left_off=left_off, right_off=right_off)
-
-        # self.ui.carpetView.setImage(image.T)
-        # max_aspect_ratio = image.shape[0] / image.shape[1]
-        # self.ui.carpetView.setLevels(-3, 3)
         self.ui.aspectratioSpinBox.setValue(1)
         self._update_aspect_ratio()
 
