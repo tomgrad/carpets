@@ -1,0 +1,146 @@
+# -*- coding: utf-8 -*-
+
+################################################################################
+## Form generated from reading UI file 'mainwindow.ui'
+##
+## Created by: Qt User Interface Compiler version 6.8.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
+
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
+from PySide6.QtWidgets import (QApplication, QComboBox, QDoubleSpinBox, QFormLayout,
+    QGridLayout, QGroupBox, QLabel, QLayout,
+    QMainWindow, QPushButton, QSizePolicy, QStatusBar,
+    QVBoxLayout, QWidget)
+
+from pyqtgraph import (ImageView, PlotWidget)
+
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        if not MainWindow.objectName():
+            MainWindow.setObjectName(u"MainWindow")
+        MainWindow.resize(1127, 810)
+        self.actionOpen_ECG = QAction(MainWindow)
+        self.actionOpen_ECG.setObjectName(u"actionOpen_ECG")
+        self.actionQuit = QAction(MainWindow)
+        self.actionQuit.setObjectName(u"actionQuit")
+        self.centralwidget = QWidget(MainWindow)
+        self.centralwidget.setObjectName(u"centralwidget")
+        self.gridLayout_2 = QGridLayout(self.centralwidget)
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.gridLayout = QGridLayout()
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setSizeConstraint(QLayout.SizeConstraint.SetMaximumSize)
+        self.carpetView = ImageView(self.centralwidget)
+        self.carpetView.setObjectName(u"carpetView")
+
+        self.gridLayout.addWidget(self.carpetView, 0, 0, 1, 1)
+
+        self.signalView = PlotWidget(self.centralwidget)
+        self.signalView.setObjectName(u"signalView")
+
+        self.gridLayout.addWidget(self.signalView, 1, 0, 1, 1)
+
+        self.groupBox = QGroupBox(self.centralwidget)
+        self.groupBox.setObjectName(u"groupBox")
+        self.verticalLayout = QVBoxLayout(self.groupBox)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.formLayout = QFormLayout()
+        self.formLayout.setObjectName(u"formLayout")
+        self.label = QLabel(self.groupBox)
+        self.label.setObjectName(u"label")
+
+        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.label)
+
+        self.aspectratioSpinBox = QDoubleSpinBox(self.groupBox)
+        self.aspectratioSpinBox.setObjectName(u"aspectratioSpinBox")
+        self.aspectratioSpinBox.setMinimum(0.100000000000000)
+        self.aspectratioSpinBox.setSingleStep(0.100000000000000)
+
+        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.aspectratioSpinBox)
+
+        self.label_2 = QLabel(self.groupBox)
+        self.label_2.setObjectName(u"label_2")
+
+        self.formLayout.setWidget(3, QFormLayout.LabelRole, self.label_2)
+
+        self.cmapComboBox = QComboBox(self.groupBox)
+        self.cmapComboBox.addItem("")
+        self.cmapComboBox.addItem("")
+        self.cmapComboBox.addItem("")
+        self.cmapComboBox.addItem("")
+        self.cmapComboBox.addItem("")
+        self.cmapComboBox.setObjectName(u"cmapComboBox")
+
+        self.formLayout.setWidget(3, QFormLayout.FieldRole, self.cmapComboBox)
+
+        self.pushButton = QPushButton(self.groupBox)
+        self.pushButton.setObjectName(u"pushButton")
+
+        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.pushButton)
+
+        self.openPushButton = QPushButton(self.groupBox)
+        self.openPushButton.setObjectName(u"openPushButton")
+
+        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.openPushButton)
+
+        self.label_3 = QLabel(self.groupBox)
+        self.label_3.setObjectName(u"label_3")
+
+        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label_3)
+
+        self.leadComboBox = QComboBox(self.groupBox)
+        self.leadComboBox.setObjectName(u"leadComboBox")
+
+        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.leadComboBox)
+
+
+        self.verticalLayout.addLayout(self.formLayout)
+
+
+        self.gridLayout.addWidget(self.groupBox, 0, 1, 1, 1)
+
+        self.gridLayout.setRowStretch(0, 3)
+        self.gridLayout.setRowStretch(1, 1)
+        self.gridLayout.setColumnStretch(0, 10)
+        self.gridLayout.setColumnStretch(1, 1)
+        self.gridLayout.setColumnMinimumWidth(1, 180)
+
+        self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
+
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.statusbar = QStatusBar(MainWindow)
+        self.statusbar.setObjectName(u"statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+
+        QMetaObject.connectSlotsByName(MainWindow)
+    # setupUi
+
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Dywaniki", None))
+        self.actionOpen_ECG.setText(QCoreApplication.translate("MainWindow", u"&Open ECG", None))
+        self.actionQuit.setText(QCoreApplication.translate("MainWindow", u"&Quit", None))
+        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Options", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"Aspect ratio", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Color map", None))
+        self.cmapComboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"jet", None))
+        self.cmapComboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"seismic", None))
+        self.cmapComboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"bwr", None))
+        self.cmapComboBox.setItemText(3, QCoreApplication.translate("MainWindow", u"gray", None))
+        self.cmapComboBox.setItemText(4, QCoreApplication.translate("MainWindow", u"gray_r", None))
+
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Debug", None))
+        self.openPushButton.setText(QCoreApplication.translate("MainWindow", u"Open", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Lead", None))
+    # retranslateUi
+
