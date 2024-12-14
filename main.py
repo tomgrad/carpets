@@ -17,23 +17,13 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        cm = pg.colormap.getFromMatplotlib('jet')
-
-        self.ui.carpetView.setColorMap(cm)
-        self.ui.carpetView.ui.menuBtn.hide()
-        self.ui.carpetView.ui.roiBtn.hide()
-
         self.ui.signalView.plotItem.setMouseEnabled(
             y=False)  # Only allow zoom in X-axis
         self.ui.signalView.showGrid(x=True, y=True)
 
         self._open_file("MRSY_06102022_1512.csv")
 
-        self.ui.aspectratioSpinBox.valueChanged.connect(
-            self._update_aspect_ratio)
-        self.ui.actionOpen_ECG.triggered.connect(self._open_file)
         self.ui.openPushButton.clicked.connect(self._open_file)
-        self.ui.pushButton.clicked.connect(self._debug)
         self.ui.carpetView.view.sigRangeChanged.connect(self._panSignal)
         self.ui.cmapComboBox.currentIndexChanged.connect(self._update_cmap)
         self.ui.leadComboBox.currentIndexChanged.connect(self._update_lead)
@@ -51,26 +41,16 @@ class MainWindow(QMainWindow):
         cm = pg.colormap.getFromMatplotlib(cmap)
         self.ui.carpetView.setColorMap(cm)
 
-    def _debug(self):
-        print("debug")
-
-    def _update_aspect_ratio(self):
-        self.ui.carpetView.view.setAspectLocked(
-            True, self.ui.aspectratioSpinBox.value())
-
     def _update_lead(self):
         self.lead = self.ui.leadComboBox.currentIndex()
         t = np.arange(0, self.ecg.shape[1]) / self.sampling_rate
         self.ui.signalView.clear()
         self.ui.signalView.plot(t, self.ecg[self.lead])
 
-        left_off = self.sampling_rate
-        right_off = 3*self.sampling_rate//2
-        image, _ = utils.make_carpet(self.ecg[self.lead], self.rpeaks, first_r=2, beats=len(
-            self.rpeaks)-5, left_off=left_off, right_off=right_off)
+        image, _ = utils.make_carpet(self.ecg[self.lead], self.rpeaks, first_r=0, beats=len(
+            self.rpeaks), left_off=self.left_off, right_off=self.right_off)
 
         self.ui.carpetView.setImage(image.T)
-        self.ui.carpetView.setLevels(-3, 3)
 
     def _open_file(self, filename=False):
         if filename is False:
@@ -79,7 +59,6 @@ class MainWindow(QMainWindow):
                                                        )
         else:
             self.filename = filename
-        print(self.filename)
         file_ext = self.filename[-3:]
         if file_ext == 'ecg':
             self.ecg, self.leads, self.sampling_rate, self.datetime = utils.load_ishne(
@@ -107,11 +86,16 @@ class MainWindow(QMainWindow):
         _, self.rpeaks = nk.ecg_peaks(
             self.ecg[0], sampling_rate=self.sampling_rate, method='neurokit')
         self.rpeaks = self.rpeaks['ECG_R_Peaks']
+        self.rpeaks = utils.cut_rpeaks(
+            self.rpeaks, self.left_off, self.right_off, self.ecg.shape[-1])
 
-        
+   
         self._update_lead()
-        self.ui.aspectratioSpinBox.setValue(1)
-        self._update_aspect_ratio()
+
+        view = self.ui.carpetView.getView()
+        viewrange = self.left_off+self.right_off
+        view.setLimits(xMin=0, xMax=viewrange, minXRange=viewrange, maxXRange=viewrange, minYRange=10, maxYRange=len(self.rpeaks), yMin=0, yMax=len(self.rpeaks))
+        self.ui.carpetView.setLevels(-3, 3)
 
 
 app = QApplication(sys.argv)

@@ -14,7 +14,8 @@ def load_ishne(filename, lead=0):
     record.load_data()
     dt = datetime(record.record_date.year, record.record_date.month,
                   record.record_date.day, record.start_time.hour, record.start_time.minute)
-    return record.lead[lead].data, 1, record.sr, dt
+    return np.stack([l.data for l in record.lead]), len(record.lead), record.sr, dt
+    # return record.lead[lead].data, 1, record.sr, dt
 
 
 def load_csv(filename):
@@ -43,3 +44,8 @@ def make_carpet(ecg, rpeaks, first_r, beats=512, left_off=256, right_off=256):
     rp = rpeaks[first_r:first_r+beats]
     result = [ecg[r-left_off:r+right_off] for r in rp]
     return np.stack(result), rp
+
+def cut_rpeaks(rpeaks, left_off, right_off, length):
+    first = next(i for i, x in enumerate(rpeaks) if x > left_off)
+    last = len(rpeaks) - next(i for i, x in enumerate(rpeaks[::-1]) if x < length-right_off)
+    return rpeaks[first:last]
