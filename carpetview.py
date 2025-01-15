@@ -8,7 +8,7 @@ class CarpetView(pg.ImageView):
         cm = pg.colormap.getFromMatplotlib('jet')
         self.setColorMap(cm)
         self.view.setMouseEnabled(x=False, y=True)
-        self.view.setAspectLocked(True)
+        # self.view.setAutoPan(y=True)
+        # self.view.setAutoVisible(y=True)
+        # self.view.setAspectLocked(True)
 
-
-    

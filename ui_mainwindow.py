@@ -18,8 +18,8 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QGridLayout,
     QGroupBox, QLabel, QLayout, QMainWindow,
-    QPushButton, QSizePolicy, QStatusBar, QVBoxLayout,
-    QWidget)
+    QPushButton, QSizePolicy, QSpinBox, QStatusBar,
+    QVBoxLayout, QWidget)
 
 from carpetview import CarpetView
 from pyqtgraph import PlotWidget
@@ -56,25 +56,20 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.formLayout = QFormLayout()
         self.formLayout.setObjectName(u"formLayout")
-        self.openPushButton = QPushButton(self.groupBox)
-        self.openPushButton.setObjectName(u"openPushButton")
-
-        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.openPushButton)
-
         self.label_3 = QLabel(self.groupBox)
         self.label_3.setObjectName(u"label_3")
 
-        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label_3)
+        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.label_3)
 
         self.leadComboBox = QComboBox(self.groupBox)
         self.leadComboBox.setObjectName(u"leadComboBox")
 
-        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.leadComboBox)
+        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.leadComboBox)
 
         self.label_2 = QLabel(self.groupBox)
         self.label_2.setObjectName(u"label_2")
 
-        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.label_2)
+        self.formLayout.setWidget(5, QFormLayout.LabelRole, self.label_2)
 
         self.cmapComboBox = QComboBox(self.groupBox)
         self.cmapComboBox.addItem("")
@@ -84,7 +79,40 @@ class Ui_MainWindow(object):
         self.cmapComboBox.addItem("")
         self.cmapComboBox.setObjectName(u"cmapComboBox")
 
-        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.cmapComboBox)
+        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.cmapComboBox)
+
+        self.r1spinBox = QSpinBox(self.groupBox)
+        self.r1spinBox.setObjectName(u"r1spinBox")
+        self.r1spinBox.setSingleStep(60)
+
+        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.r1spinBox)
+
+        self.openPushButton = QPushButton(self.groupBox)
+        self.openPushButton.setObjectName(u"openPushButton")
+
+        self.formLayout.setWidget(0, QFormLayout.SpanningRole, self.openPushButton)
+
+        self.updateRangePushButton = QPushButton(self.groupBox)
+        self.updateRangePushButton.setObjectName(u"updateRangePushButton")
+
+        self.formLayout.setWidget(3, QFormLayout.SpanningRole, self.updateRangePushButton)
+
+        self.label = QLabel(self.groupBox)
+        self.label.setObjectName(u"label")
+
+        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.label)
+
+        self.r2spinBox = QSpinBox(self.groupBox)
+        self.r2spinBox.setObjectName(u"r2spinBox")
+        self.r2spinBox.setMaximum(256)
+        self.r2spinBox.setSingleStep(60)
+
+        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.r2spinBox)
+
+        self.label_4 = QLabel(self.groupBox)
+        self.label_4.setObjectName(u"label_4")
+
+        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label_4)
 
 
         self.verticalLayout.addLayout(self.formLayout)
@@ -115,7 +143,6 @@ class Ui_MainWindow(object):
         self.actionOpen_ECG.setText(QCoreApplication.translate("MainWindow", u"&Open ECG", None))
         self.actionQuit.setText(QCoreApplication.translate("MainWindow", u"&Quit", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Options", None))
-        self.openPushButton.setText(QCoreApplication.translate("MainWindow", u"Open", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Lead", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Color map", None))
         self.cmapComboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"jet", None))
@@ -124,5 +151,9 @@ class Ui_MainWindow(object):
         self.cmapComboBox.setItemText(3, QCoreApplication.translate("MainWindow", u"gray", None))
         self.cmapComboBox.setItemText(4, QCoreApplication.translate("MainWindow", u"gray_r", None))
 
+        self.openPushButton.setText(QCoreApplication.translate("MainWindow", u"Open file", None))
+        self.updateRangePushButton.setText(QCoreApplication.translate("MainWindow", u"Update range", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"beats", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"first R", None))
     # retranslateUi
 

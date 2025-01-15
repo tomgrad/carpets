@@ -21,13 +21,25 @@ class MainWindow(QMainWindow):
             y=False)  # Only allow zoom in X-axis
         self.ui.signalView.showGrid(x=True, y=True)
 
-        self._open_file("MRSY_06102022_1512.csv")
+        self.firstR = 0
+        self.default_beats = 500
 
         self.ui.openPushButton.clicked.connect(self._open_file)
         self.ui.carpetView.view.sigRangeChanged.connect(self._panSignal)
-        self.ui.cmapComboBox.currentIndexChanged.connect(self._update_cmap)
-        self.ui.leadComboBox.currentIndexChanged.connect(self._update_lead)
+        # self.ui.cmapComboBox.currentIndexChanged.connect(self._update_cmap)
+        # self.ui.leadComboBox.currentIndexChanged.connect(self._update_lead)
+        self.ui.updateRangePushButton.clicked.connect(self._update_range)
 
+        # self._open_file("MRSY_06102022_1512.csv")
+        # self._open_file()
+
+    
+    def _update_range(self):
+        self.firstR = self.ui.r1spinBox.value()
+        self.beats = self.ui.r2spinBox.value()
+        self._update_lead()
+       
+    
     def _panSignal(self):
         r_range = self.ui.carpetView.view.viewRange()[1]
         r1, r2 = int(r_range[0]), int(r_range[1])
@@ -47,10 +59,24 @@ class MainWindow(QMainWindow):
         self.ui.signalView.clear()
         self.ui.signalView.plot(t, self.ecg[self.lead])
 
-        image, _ = utils.make_carpet(self.ecg[self.lead], self.rpeaks, first_r=0, beats=len(
-            self.rpeaks), left_off=self.left_off, right_off=self.right_off)
+        image, _ = utils.make_carpet(self.ecg[self.lead], self.rpeaks, first_r=self.firstR, beats=self.beats, left_off=self.left_off, right_off=self.right_off)
 
+        view = self.ui.carpetView.getView()
+
+
+        width = self.left_off+self.right_off
+        sr = self.sampling_rate
+        # view.setAutoPan(y=True)
+        # view.setAutoVisible(y=True)
+        # view.setLimits(xMin=-100, xMax=viewrange, minXRange=viewrange, maxXRange=viewrange+200, minYRange=10, maxYRange=self.beats, yMin=0, yMax=len(self.rpeaks))
         self.ui.carpetView.setImage(image.T)
+        view.setLimits(xMin=-sr//8, xMax=width+sr//8, 
+                        minXRange=width+sr//4,
+                        maxXRange=width+sr//4,
+                        yMin=-2, yMax=self.beats+2,                       
+                        minYRange=10, maxYRange=self.beats+4
+                        )
+
 
     def _open_file(self, filename=False):
         if filename is False:
@@ -72,9 +98,15 @@ class MainWindow(QMainWindow):
         else:
             return
         
+
+
         self.ui.leadComboBox.clear()
         for lead in range(self.leads):
             self.ui.leadComboBox.addItem(f"Lead {lead+1}")
+        self.ui.leadComboBox.setCurrentIndex(0)
+
+        self.beats = min(self.default_beats, self.ecg.shape[-1])
+        
 
         self.lead=0
         self.left_off = self.sampling_rate
@@ -89,14 +121,21 @@ class MainWindow(QMainWindow):
         self.rpeaks = utils.cut_rpeaks(
             self.rpeaks, self.left_off, self.right_off, self.ecg.shape[-1])
 
+        self.ui.r1spinBox.setMaximum(len(self.rpeaks)-10)
+        self.ui.r2spinBox.setMaximum(len(self.rpeaks))
+        self.ui.r2spinBox.setMinimum(10)
+        self.ui.r1spinBox.setValue(0)
+        self.ui.r2spinBox.setValue(self.beats)
    
         self._update_lead()
-
-        view = self.ui.carpetView.getView()
-        viewrange = self.left_off+self.right_off
-        view.setLimits(xMin=0, xMax=viewrange, minXRange=viewrange, maxXRange=viewrange, minYRange=10, maxYRange=len(self.rpeaks), yMin=0, yMax=len(self.rpeaks))
         self.ui.carpetView.setLevels(-3, 3)
 
+        ax = self.ui.carpetView.getView().getAxis('bottom')
+        ticks = np.linspace(0, self.left_off+self.right_off, 6)
+
+        ax.setTicks([
+           [(t.item(), str(int((t-self.sampling_rate)*1000/self.sampling_rate))) for t in ticks]
+           ])
 
 app = QApplication(sys.argv)
 window = MainWindow()
