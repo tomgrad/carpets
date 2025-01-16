@@ -91,8 +91,7 @@ class MainWindow(QMainWindow):
         elif file_ext == 'hea':
             record = utils.load_wfdb(self.filename)
         elif file_ext == 'csv':
-            self.ecg, self.leads, self.sampling_rate, self.datetime = utils.load_csv(
-                self.filename)
+            record = utils.load_csv(self.filename)
         else:
             return
         
@@ -102,8 +101,6 @@ class MainWindow(QMainWindow):
         self.leads = record['n_sig']
 
         self.ui.leadComboBox.clear()
-        # for lead in range(self.leads):
-            # self.ui.leadComboBox.addItem(f"Lead {lead+1}")
 
         for label in record['sig_name']:
             self.ui.leadComboBox.addItem(label)

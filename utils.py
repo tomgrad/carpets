@@ -13,7 +13,13 @@ def load_ishne(filename, lead=0):
     record.load_data()
     dt = datetime(record.record_date.year, record.record_date.month,
                   record.record_date.day, record.start_time.hour, record.start_time.minute)
-    return np.stack([l.data for l in record.lead]), len(record.lead), record.sr, dt
+    return {'signal': np.stack([l.data for l in record.lead]),
+            'n_sig': len(record.lead),
+            'sampling_rate': record.sr,
+            'datetime': dt,
+            'record_name': filename,
+            'sig_len': len(record.lead[0].data),
+            'sig_name': [f'Lead {i+1}' for i in range(len(record.lead))]}
 
 
 def load_csv(filename):
@@ -22,7 +28,13 @@ def load_csv(filename):
         record = record.reshape(1, -1)
     sr = 200  # zakodować w nazwie katalogu?
     dt = datetime(year=1980, month=5, day=2, hour=0, minute=0)
-    return record, record.shape[0], sr, dt
+    return {'signal': record,
+            'sampling_rate': sr,
+            'datetime': dt,
+            'n_sig': record.shape[0],
+            'sig_len': record.shape[1],
+            'sig_name': [f'Lead {i+1}' for i in range(record.shape[0])],
+            'record_name': filename}
 
 
 def load_wfdb(filename):
