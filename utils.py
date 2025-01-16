@@ -25,16 +25,21 @@ def load_csv(filename):
     return record, record.shape[0], sr, dt
 
 
-def load_mit(filename):
+def load_wfdb(filename):
     base_fn = filename[:-4]
     record = wfdb.rdrecord(base_fn)
-    # print(record.__dict__)
     try:
         dt = datetime(year=1980, month=5, day=2, hour=record.base_time.hour,
                       minute=record.base_time.minute, second=record.base_time.second)
     except:
         dt = datetime(year=1980, month=5, day=2, hour=0, minute=0)
-    return record.p_signal.T, record.p_signal.shape[1], record.fs, dt
+    return {'signal': record.p_signal.T,
+            'sampling_rate': record.fs,
+            'record_name': record.record_name,
+            'sig_len': record.sig_len,
+            'datetime': dt,
+            'n_sig': record.n_sig,
+            'sig_name': record.sig_name}
 
 
 def make_carpet(ecg, rpeaks, first_r, beats=512, left_off=256, right_off=256):

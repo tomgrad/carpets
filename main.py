@@ -81,26 +81,32 @@ class MainWindow(QMainWindow):
     def _open_file(self, filename=False):
         if filename is False:
             self.filename, _ = QFileDialog.getOpenFileName(self, "Open ECG", "",
-                                                       "ECG files (*.ecg *.hea *.csv *.ISHNE);;Ishne ECG (*.ecg *.ISHNE);;MIT ECG (*.hea);;CSV (*.csv)"
+                                                       "ECG files (*.ecg *.hea *.csv *.ISHNE);;Ishne ECG (*.ecg *.ISHNE);;WFDB (MIT) ECG (*.hea);;CSV (*.csv)"
                                                        )
         else:
             self.filename = filename
         file_ext = self.filename.split('.')[-1]
         if file_ext == 'ecg' or file_ext == 'ISHNE':
-            self.ecg, self.leads, self.sampling_rate, self.datetime = utils.load_ishne(
-                self.filename)
+            record = utils.load_ishne(self.filename)
         elif file_ext == 'hea':
-            self.ecg, self.leads, self.sampling_rate, self.datetime = utils.load_mit(
-                self.filename)
+            record = utils.load_wfdb(self.filename)
         elif file_ext == 'csv':
             self.ecg, self.leads, self.sampling_rate, self.datetime = utils.load_csv(
                 self.filename)
         else:
             return
+        
+        self.ecg = record['signal']
+        self.sampling_rate = record['sampling_rate']
+        self.datetime = record['datetime']
+        self.leads = record['n_sig']
 
         self.ui.leadComboBox.clear()
-        for lead in range(self.leads):
-            self.ui.leadComboBox.addItem(f"Lead {lead+1}")
+        # for lead in range(self.leads):
+            # self.ui.leadComboBox.addItem(f"Lead {lead+1}")
+
+        for label in record['sig_name']:
+            self.ui.leadComboBox.addItem(label)
         self.ui.leadComboBox.setCurrentIndex(0)
 
         self.beats = min(self.default_beats, self.ecg.shape[-1])
