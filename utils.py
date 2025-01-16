@@ -10,12 +10,10 @@ import neurokit2 as nk
 
 def load_ishne(filename, lead=0):
     record = Holter(filename)
-    print(record.__dict__)
     record.load_data()
     dt = datetime(record.record_date.year, record.record_date.month,
                   record.record_date.day, record.start_time.hour, record.start_time.minute)
     return np.stack([l.data for l in record.lead]), len(record.lead), record.sr, dt
-    # return record.lead[lead].data, 1, record.sr, dt
 
 
 def load_csv(filename):
@@ -24,7 +22,6 @@ def load_csv(filename):
         record = record.reshape(1, -1)
     sr = 200  # zakodować w nazwie katalogu?
     dt = datetime(year=1980, month=5, day=2, hour=0, minute=0)
-
     return record, record.shape[0], sr, dt
 
 
