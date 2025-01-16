@@ -81,12 +81,12 @@ class MainWindow(QMainWindow):
     def _open_file(self, filename=False):
         if filename is False:
             self.filename, _ = QFileDialog.getOpenFileName(self, "Open ECG", "",
-                                                       "ECG files (*.ecg *.hea *.csv);;Ishne ECG (*.ecg);;MIT ECG (*.hea);;CSV (*.csv)"
+                                                       "ECG files (*.ecg *.hea *.csv *.ISHNE);;Ishne ECG (*.ecg *.ISHNE);;MIT ECG (*.hea);;CSV (*.csv)"
                                                        )
         else:
             self.filename = filename
-        file_ext = self.filename[-3:]
-        if file_ext == 'ecg':
+        file_ext = self.filename.split('.')[-1]
+        if file_ext == 'ecg' or file_ext == 'ISHNE':
             self.ecg, self.leads, self.sampling_rate, self.datetime = utils.load_ishne(
                 self.filename)
         elif file_ext == 'hea':
@@ -97,8 +97,6 @@ class MainWindow(QMainWindow):
                 self.filename)
         else:
             return
-        
-
 
         self.ui.leadComboBox.clear()
         for lead in range(self.leads):
