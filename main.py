@@ -26,8 +26,8 @@ class MainWindow(QMainWindow):
 
         self.ui.openPushButton.clicked.connect(self._open_file)
         self.ui.carpetView.view.sigRangeChanged.connect(self._panSignal)
-        # self.ui.cmapComboBox.currentIndexChanged.connect(self._update_cmap)
-        # self.ui.leadComboBox.currentIndexChanged.connect(self._update_lead)
+        self.ui.cmapComboBox.currentIndexChanged.connect(self._update_cmap)
+        self.ui.leadComboBox.currentIndexChanged.connect(self._update_lead)
         self.ui.updateRangePushButton.clicked.connect(self._update_range)
 
         # self._open_file("MRSY_06102022_1512.csv")
