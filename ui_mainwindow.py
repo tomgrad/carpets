@@ -42,6 +42,7 @@ class Ui_MainWindow(object):
         self.gridLayout.setSizeConstraint(QLayout.SizeConstraint.SetMaximumSize)
         self.carpetView = CarpetView(self.centralwidget)
         self.carpetView.setObjectName(u"carpetView")
+        self.carpetView.setEnabled(True)
 
         self.gridLayout.addWidget(self.carpetView, 0, 0, 1, 1)
 

@@ -21,7 +21,11 @@
        <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
       </property>
       <item row="0" column="0">
-       <widget class="CarpetView" name="carpetView"/>
+       <widget class="CarpetView" name="carpetView">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="PlotWidget" name="signalView"/>
