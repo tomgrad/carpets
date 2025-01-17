@@ -19,6 +19,8 @@ class MainWindow(QMainWindow):
 
         self.ui.signalView.plotItem.setMouseEnabled(y=False)  # Only allow zoom in X-axis
         self.ui.signalView.showGrid(x=True, y=True)
+        self.ui.signalView.plotItem.getViewBox().setAutoVisible(y=True)
+        self.ui.carpetView.view.setMouseEnabled(x=False)
 
         self.rpeaks = np.array([0])
         self.sampling_rate = 1
@@ -61,7 +63,7 @@ class MainWindow(QMainWindow):
 
         width = self.left_off+self.right_off
         sr = self.sampling_rate
-        view.setAutoPan(y=True)
+        # view.setAutoPan(y=True)
         # view.setAutoVisible(y=True)
         # view.setLimits(xMin=-100, xMax=viewrange, minXRange=viewrange, maxXRange=viewrange+200, minYRange=10, maxYRange=self.beats, yMin=0, yMax=len(self.rpeaks))
         self.ui.carpetView.setImage(image.T)
@@ -69,7 +71,7 @@ class MainWindow(QMainWindow):
                         minXRange=width+sr//4,
                         maxXRange=width+sr//4,
                         yMin=-2, yMax=self.beats+2,                       
-                        minYRange=10, maxYRange=self.beats+4
+                        minYRange=5, maxYRange=self.beats+4
                         )
 
 
@@ -95,7 +97,9 @@ class MainWindow(QMainWindow):
         self.datetime = record['datetime']
         self.leads = record['n_sig']
 
-        self.beats = min(self.default_beats, self.ecg.shape[-1])
+        print(f"sampling rate: {self.sampling_rate}, leads: {self.leads}")
+
+        
         self.lead=0
         self.left_off = self.sampling_rate
         self.right_off = 3*self.sampling_rate//2
@@ -109,8 +113,10 @@ class MainWindow(QMainWindow):
         self.rpeaks = utils.cut_rpeaks(
             self.rpeaks, self.left_off, self.right_off, self.ecg.shape[-1])
 
+        self.beats = min(self.default_beats, len(self.rpeaks))
         self.ui.r1spinBox.setMaximum(len(self.rpeaks)-10)
         self.ui.r2spinBox.setMaximum(len(self.rpeaks))
+        self.ui.r1spinBox.setMinimum(0)
         self.ui.r2spinBox.setMinimum(10)
         self.ui.r1spinBox.setValue(0)
         self.ui.r2spinBox.setValue(self.beats)
