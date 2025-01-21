@@ -73,6 +73,9 @@ class MainWindow(QMainWindow):
                         yMin=-2, yMax=self.beats+2,                       
                         minYRange=5, maxYRange=self.beats+4
                         )
+        p1, p2 = np.percentile(self.ecg[self.lead], [1, 99])
+
+        self.ui.carpetView.setLevels(p1, p2)
 
 
     def _open_file(self, filename=False):
@@ -129,7 +132,8 @@ class MainWindow(QMainWindow):
         
         self._update_lead()
 
-        self.ui.carpetView.setLevels(-3, 3)
+        # p1, p2 = np.percentile(self.ecg[0], [1, 99])
+        # self.ui.carpetView.setLevels(p1, p2)
 
         ax = self.ui.carpetView.getView().getAxis('bottom')
         ticks = np.linspace(0, self.left_off+self.right_off, 6)
