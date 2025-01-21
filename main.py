@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
         self.ui.signalView.showGrid(x=True, y=True)
         self.ui.signalView.plotItem.getViewBox().setAutoVisible(y=True)
         self.ui.carpetView.view.setMouseEnabled(x=False)
+        self.ui.carpetView.RtoTime = self.RtoTime
 
         self.rpeaks = np.array([0])
         self.sampling_rate = 1
@@ -63,9 +64,6 @@ class MainWindow(QMainWindow):
 
         width = self.left_off+self.right_off
         sr = self.sampling_rate
-        # view.setAutoPan(y=True)
-        # view.setAutoVisible(y=True)
-        # view.setLimits(xMin=-100, xMax=viewrange, minXRange=viewrange, maxXRange=viewrange+200, minYRange=10, maxYRange=self.beats, yMin=0, yMax=len(self.rpeaks))
         self.ui.carpetView.setImage(image.T)
         view.setLimits(xMin=-sr//8, xMax=width+sr//8, 
                         minXRange=width+sr//4,
@@ -74,8 +72,9 @@ class MainWindow(QMainWindow):
                         minYRange=5, maxYRange=self.beats+4
                         )
         p1, p2 = np.percentile(self.ecg[self.lead], [1, 99])
-
         self.ui.carpetView.setLevels(p1, p2)
+        hist = self.ui.carpetView.getHistogramWidget()
+        hist.setHistogramRange(p1, p2)
 
 
     def _open_file(self, filename=False):
@@ -132,15 +131,24 @@ class MainWindow(QMainWindow):
         
         self._update_lead()
 
-        # p1, p2 = np.percentile(self.ecg[0], [1, 99])
-        # self.ui.carpetView.setLevels(p1, p2)
+        self.ui.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)
 
-        ax = self.ui.carpetView.getView().getAxis('bottom')
-        ticks = np.linspace(0, self.left_off+self.right_off, 6)
+    def RtoTime(self, R):
+        if R < 0:
+            return ""
+        if R >= len(self.rpeaks):
+            return ""
+        R = int(R)
+        totalSeconds = self.rpeaks[R]/self.sampling_rate
+        minutes = int(totalSeconds//60)
+        seconds = int(totalSeconds%60)
+        return f"{minutes:02d}:{seconds:02d}\n{R}RR"
+    
 
-        ax.setTicks([
-           [(t.item(), str(int((t-self.sampling_rate)*1000/self.sampling_rate))) for t in ticks]
-           ])
+    
+
+        
+
         
 
 app = QApplication(sys.argv)
