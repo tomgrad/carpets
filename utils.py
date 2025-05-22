@@ -53,6 +53,18 @@ def load_wfdb(filename):
             'n_sig': record.n_sig,
             'sig_name': record.sig_name}
 
+def clean_ecg(ecg, sampling_rate):
+    clean = np.stack([nk.ecg_clean(sig, sampling_rate=sampling_rate) for sig in ecg])
+    clean /= clean.std(axis=1, keepdims=True)
+    return clean
+
+def get_rpeaks(ecg, sampling_rate, left_off, right_off, r_source_lead=0):
+    _, rpeaks = nk.ecg_peaks(
+        ecg[r_source_lead], sampling_rate=sampling_rate, method='neurokit')
+    rpeaks = rpeaks['ECG_R_Peaks']
+    rpeaks = cut_rpeaks(rpeaks, left_off, right_off, ecg.shape[-1])
+    return rpeaks
+
 
 def make_carpet(ecg, rpeaks, first_r, beats=512, left_off=256, right_off=256):
     rp = rpeaks[first_r:first_r+beats]
