@@ -75,7 +75,7 @@ class MainWindow(QMainWindow):
         self.ui.carpetView.setLevels(p1, p2)
         hist = self.ui.carpetView.getHistogramWidget()
         hist.setHistogramRange(p1, p2)
-
+        self.ui.signalView.setYRange(p1, p2)
 
     def _open_file(self, filename=False):
         if filename is False:
@@ -100,20 +100,12 @@ class MainWindow(QMainWindow):
         self.leads = record['n_sig']
 
         print(f"sampling rate: {self.sampling_rate}, leads: {self.leads}")
-
         
         self.lead=0
         self.left_off = self.sampling_rate
         self.right_off = 3*self.sampling_rate//2
-
-        self.ecg = np.stack([nk.ecg_clean(sig, sampling_rate=self.sampling_rate) for sig in self.ecg])
-        self.ecg /= self.ecg.std(axis=1, keepdims=True)
-
-        _, self.rpeaks = nk.ecg_peaks(
-            self.ecg[0], sampling_rate=self.sampling_rate, method='neurokit')
-        self.rpeaks = self.rpeaks['ECG_R_Peaks']
-        self.rpeaks = utils.cut_rpeaks(
-            self.rpeaks, self.left_off, self.right_off, self.ecg.shape[-1])
+        self.ecg = utils.clean_ecg(self.ecg, self.sampling_rate)
+        self.rpeaks = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=1)
 
         self.beats = min(self.default_beats, len(self.rpeaks))
         self.ui.r1spinBox.setMaximum(len(self.rpeaks)-10)
@@ -128,7 +120,13 @@ class MainWindow(QMainWindow):
         for label in record['sig_name']:
             self.ui.leadComboBox.addItem(label)
         self.ui.leadComboBox.blockSignals(False)
-        
+
+        self.ui.rSourceLeadComboBox.blockSignals(True) # prevent _update_signal() from being triggered
+        self.ui.rSourceLeadComboBox.clear()
+        for label in record['sig_name']:
+            self.ui.rSourceLeadComboBox.addItem(label)
+        self.ui.rSourceLeadComboBox.blockSignals(False)
+
         self._update_lead()
 
         self.ui.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)
@@ -144,13 +142,6 @@ class MainWindow(QMainWindow):
         seconds = int(totalSeconds%60)
         return f"{minutes:02d}:{seconds:02d}\n{R}RR"
     
-
-    
-
-        
-
-        
-
 app = QApplication(sys.argv)
 window = MainWindow()
 window.show()

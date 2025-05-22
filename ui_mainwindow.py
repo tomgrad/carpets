@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'mainwindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.1
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -60,17 +60,17 @@ class Ui_MainWindow(object):
         self.label_3 = QLabel(self.groupBox)
         self.label_3.setObjectName(u"label_3")
 
-        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.label_3)
+        self.formLayout.setWidget(4, QFormLayout.ItemRole.LabelRole, self.label_3)
 
         self.leadComboBox = QComboBox(self.groupBox)
         self.leadComboBox.setObjectName(u"leadComboBox")
 
-        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.leadComboBox)
+        self.formLayout.setWidget(4, QFormLayout.ItemRole.FieldRole, self.leadComboBox)
 
         self.label_2 = QLabel(self.groupBox)
         self.label_2.setObjectName(u"label_2")
 
-        self.formLayout.setWidget(5, QFormLayout.LabelRole, self.label_2)
+        self.formLayout.setWidget(5, QFormLayout.ItemRole.LabelRole, self.label_2)
 
         self.cmapComboBox = QComboBox(self.groupBox)
         self.cmapComboBox.addItem("")
@@ -80,40 +80,50 @@ class Ui_MainWindow(object):
         self.cmapComboBox.addItem("")
         self.cmapComboBox.setObjectName(u"cmapComboBox")
 
-        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.cmapComboBox)
+        self.formLayout.setWidget(5, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
 
         self.r1spinBox = QSpinBox(self.groupBox)
         self.r1spinBox.setObjectName(u"r1spinBox")
         self.r1spinBox.setSingleStep(60)
 
-        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.r1spinBox)
+        self.formLayout.setWidget(1, QFormLayout.ItemRole.FieldRole, self.r1spinBox)
 
         self.openPushButton = QPushButton(self.groupBox)
         self.openPushButton.setObjectName(u"openPushButton")
 
-        self.formLayout.setWidget(0, QFormLayout.SpanningRole, self.openPushButton)
+        self.formLayout.setWidget(0, QFormLayout.ItemRole.SpanningRole, self.openPushButton)
 
         self.updateRangePushButton = QPushButton(self.groupBox)
         self.updateRangePushButton.setObjectName(u"updateRangePushButton")
 
-        self.formLayout.setWidget(3, QFormLayout.SpanningRole, self.updateRangePushButton)
+        self.formLayout.setWidget(3, QFormLayout.ItemRole.SpanningRole, self.updateRangePushButton)
 
         self.label = QLabel(self.groupBox)
         self.label.setObjectName(u"label")
 
-        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.label)
+        self.formLayout.setWidget(2, QFormLayout.ItemRole.LabelRole, self.label)
 
         self.r2spinBox = QSpinBox(self.groupBox)
         self.r2spinBox.setObjectName(u"r2spinBox")
         self.r2spinBox.setMaximum(256)
         self.r2spinBox.setSingleStep(60)
 
-        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.r2spinBox)
+        self.formLayout.setWidget(2, QFormLayout.ItemRole.FieldRole, self.r2spinBox)
 
         self.label_4 = QLabel(self.groupBox)
         self.label_4.setObjectName(u"label_4")
 
-        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label_4)
+        self.formLayout.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_4)
+
+        self.rSourceLeadComboBox = QComboBox(self.groupBox)
+        self.rSourceLeadComboBox.setObjectName(u"rSourceLeadComboBox")
+
+        self.formLayout.setWidget(6, QFormLayout.ItemRole.FieldRole, self.rSourceLeadComboBox)
+
+        self.label_5 = QLabel(self.groupBox)
+        self.label_5.setObjectName(u"label_5")
+
+        self.formLayout.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label_5)
 
 
         self.verticalLayout.addLayout(self.formLayout)
@@ -156,5 +166,6 @@ class Ui_MainWindow(object):
         self.updateRangePushButton.setText(QCoreApplication.translate("MainWindow", u"Update range", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"beats", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"first R", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"R source", None))
     # retranslateUi
 
