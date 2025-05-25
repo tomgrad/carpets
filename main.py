@@ -20,7 +20,6 @@ class MainWindow(QMainWindow):
         self.ui.signalView.plotItem.setMouseEnabled(y=False)  # Only allow zoom in X-axis
         self.ui.signalView.showGrid(x=True, y=True)
         self.ui.signalView.plotItem.getViewBox().setAutoVisible(y=True)
-        self.ui.carpetView.view.setMouseEnabled(x=False)
         self.ui.carpetView.RtoTime = self.RtoTime
 
         self.rpeaks = np.array([0])
@@ -33,6 +32,16 @@ class MainWindow(QMainWindow):
         self.ui.leadComboBox.currentIndexChanged.connect(self._update_lead)
         self.ui.updateRangePushButton.clicked.connect(self._update_range)
         self.ui.carpetView.view.sigRangeChanged.connect(self._panSignal)
+        self.ui.rSourceLeadComboBox.currentIndexChanged.connect(self._update_rpeaks)
+
+    def _update_rpeaks(self):
+        self.rLead = self.ui.rSourceLeadComboBox.currentIndex()
+        self.rpeaks = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=self.rLead)
+        self.ui.r1spinBox.setMaximum(len(self.rpeaks)-10)
+        self.ui.r2spinBox.setMaximum(len(self.rpeaks))
+        self.ui.r1spinBox.setValue(0)
+        self.ui.r2spinBox.setValue(self.beats)
+        self._update_lead()
 
     def _update_range(self):
         self.firstR = self.ui.r1spinBox.value()
@@ -59,19 +68,11 @@ class MainWindow(QMainWindow):
         self.ui.signalView.plot(t, self.ecg[self.lead])
 
         image, _ = utils.make_carpet(self.ecg[self.lead], self.rpeaks, first_r=self.firstR, beats=self.beats, left_off=self.left_off, right_off=self.right_off)
-
-        view = self.ui.carpetView.getView()
-
         width = self.left_off+self.right_off
         sr = self.sampling_rate
-        self.ui.carpetView.setImage(image.T)
-        view.setLimits(xMin=-sr//8, xMax=width+sr//8, 
-                        minXRange=width+sr//4,
-                        maxXRange=width+sr//4,
-                        yMin=-2, yMax=self.beats+2,                       
-                        minYRange=5, maxYRange=self.beats+4
-                        )
-        p1, p2 = np.percentile(self.ecg[self.lead], [1, 99])
+
+        self.ui.carpetView.show(image)
+        p1, p2 = np.percentile(self.ecg[self.lead], [0.5, 99.5])
         self.ui.carpetView.setLevels(p1, p2)
         hist = self.ui.carpetView.getHistogramWidget()
         hist.setHistogramRange(p1, p2)
@@ -102,10 +103,11 @@ class MainWindow(QMainWindow):
         print(f"sampling rate: {self.sampling_rate}, leads: {self.leads}")
         
         self.lead=0
+        self.rLead=0
         self.left_off = self.sampling_rate
         self.right_off = 3*self.sampling_rate//2
         self.ecg = utils.clean_ecg(self.ecg, self.sampling_rate)
-        self.rpeaks = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=1)
+        self.rpeaks = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=0)
 
         self.beats = min(self.default_beats, len(self.rpeaks))
         self.ui.r1spinBox.setMaximum(len(self.rpeaks)-10)
