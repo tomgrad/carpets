@@ -8,11 +8,12 @@ import wfdb
 import neurokit2 as nk
 
 
-def load_ishne(filename, lead=0):
+def load_ishne(filename):
     record = Holter(filename)
     record.load_data()
     dt = datetime(record.record_date.year, record.record_date.month,
                   record.record_date.day, record.start_time.hour, record.start_time.minute)
+    # TODO: dodać sprawdzanie, czy odprowadzenie zawiera sygnał (np przez STD) - przypadek THEW
     return {'signal': np.stack([l.data for l in record.lead]),
             'n_sig': len(record.lead),
             'sampling_rate': record.sr,

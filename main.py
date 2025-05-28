@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QLabel
 import matplotlib.pyplot as plt  # Import matplotlib for colormap
 import pyqtgraph as pg
 import numpy as np
@@ -16,6 +16,10 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        statusbar = self.ui.statusbar
+        self.filenameLabel = QLabel()
+        statusbar.addWidget(self.filenameLabel)
 
         self.ui.signalView.plotItem.setMouseEnabled(y=False)  # Only allow zoom in X-axis
         self.ui.signalView.showGrid(x=True, y=True)
@@ -66,6 +70,8 @@ class MainWindow(QMainWindow):
         t = np.arange(0, self.ecg.shape[1]) / self.sampling_rate
         self.ui.signalView.clear()
         self.ui.signalView.plot(t, self.ecg[self.lead])
+        self.ui.signalView.plot(t[self.rpeaks], self.ecg[self.lead, self.rpeaks], pen=None, symbol='o', symbolPen=None, symbolSize=6, symbolBrush=(255, 255, 0, 128))
+
 
         image, _ = utils.make_carpet(self.ecg[self.lead], self.rpeaks, first_r=self.firstR, beats=self.beats, left_off=self.left_off, right_off=self.right_off)
         width = self.left_off+self.right_off
@@ -95,6 +101,7 @@ class MainWindow(QMainWindow):
         else:
             return
         
+        self.filenameLabel.setText(self.filename)
         self.ecg = record['signal']
         self.sampling_rate = record['sampling_rate']
         self.datetime = record['datetime']
