@@ -20,7 +20,6 @@ class CarpetView(pg.ImageView):
            [(t.item(), str(int((t-sampling_rate)*1000/sampling_rate))) for t in ticks]
            ])
         
-
     def show(self, image):
             height, width = image.shape
             self.setImage(image.T)
