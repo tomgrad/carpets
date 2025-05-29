@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
         t = np.arange(0, self.ecg.shape[1]) / self.sampling_rate
         self.ui.signalView.clear()
         self.ui.signalView.plot(t, self.ecg[self.lead])
-        self.ui.signalView.plot(t[self.rpeaks], self.ecg[self.lead, self.rpeaks], pen=None, symbol='o', symbolPen=None, symbolSize=6, symbolBrush=(255, 255, 0, 128))
+        self.ui.signalView.plot(t[self.rpeaks], self.ecg[self.lead, self.rpeaks], pen=None, symbol='o', symbolPen=None, symbolSize=10, symbolBrush=(255, 0, 0, 128))
 
 
         image, _ = utils.make_carpet(self.ecg[self.lead], self.rpeaks, first_r=self.firstR, beats=self.beats, left_off=self.left_off, right_off=self.right_off)
