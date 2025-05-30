@@ -142,6 +142,20 @@
           </layout>
          </item>
          <item>
+          <widget class="QComboBox" name="themeComboBox">
+           <item>
+            <property name="text">
+             <string>dark</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>light</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="exportPushButton">
            <property name="text">
             <string>Export image</string>

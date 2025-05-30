@@ -1,16 +1,16 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QLabel
-import matplotlib.pyplot as plt  # Import matplotlib for colormap
 import pyqtgraph as pg
 from pyqtgraph import exporters
 import numpy as np
-import neurokit2 as nk
 from pathlib import Path
-
+import datetime
 import utils
 
 from ui_mainwindow import Ui_MainWindow
 
+# pg.setConfigOption('background', 'k')
+# pg.setConfigOption('foreground', 'w')
 
 class MainWindow(QMainWindow):
 
@@ -23,7 +23,6 @@ class MainWindow(QMainWindow):
         self.filenameLabel = QLabel()
         statusbar.addWidget(self.filenameLabel)
 
-        # self.ui.signalView.plotItem.setMouseEnabled(y=False)  # Only allow zoom in X-axis
         self.ui.signalView.showGrid(x=True, y=True)
         self.ui.signalView.plotItem.getViewBox().setAutoVisible(y=True)
         self.ui.carpetView.RtoTime = self.RtoTime
@@ -40,6 +39,7 @@ class MainWindow(QMainWindow):
         self.ui.carpetView.view.sigRangeChanged.connect(self._panSignal)
         self.ui.rSourceLeadComboBox.currentIndexChanged.connect(self._update_rpeaks)
         self.ui.exportPushButton.clicked.connect(self._export_image)
+        self.ui.themeComboBox.currentIndexChanged.connect(self._set_theme)
 
 
     def _open_file(self, filename=False):
@@ -76,7 +76,6 @@ class MainWindow(QMainWindow):
         self.ecg = utils.clean_ecg(self.ecg, self.sampling_rate)
         self.rpeaks = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=0)
 
-        # self.beats = min(self.default_beats, len(self.rpeaks))
         self.beats = len(self.rpeaks)
 
         self.ui.r1spinBox.setRange(0, len(self.rpeaks))
@@ -103,6 +102,23 @@ class MainWindow(QMainWindow):
 
         self.ui.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)
 
+    def _set_theme(self):
+        theme = self.ui.themeComboBox.currentText()
+        if theme == 'dark':
+            self.ui.carpetView.getView().getViewWidget().setBackground('k')
+            self.ui.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('w'))
+            self.ui.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('w'))
+          
+        elif theme == 'light':
+            self.ui.carpetView.getView().getViewWidget().setBackground('w')
+            self.ui.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('k'))
+            self.ui.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('k'))
+
+        else:
+            print(f"Unknown theme: {theme}")
+            return
+   
+    
     def _update_lead(self):
         self.lead = self.ui.leadComboBox.currentIndex()
         T = self.ecg.shape[1] / self.sampling_rate
@@ -157,9 +173,7 @@ class MainWindow(QMainWindow):
             return ""
         R = int(R)
         totalSeconds = self.rpeaks[R]/self.sampling_rate
-        minutes = int(totalSeconds//60)
-        seconds = int(totalSeconds%60)
-        return f"{minutes:02d}:{seconds:02d}\n{R}RR"
+        return f"{datetime.timedelta(seconds=int(totalSeconds))}\n{R}RR"
     
     def _export_image(self):
         name = Path(self.filename).stem + '.png'

@@ -128,6 +128,13 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addLayout(self.formLayout)
 
+        self.themeComboBox = QComboBox(self.groupBox)
+        self.themeComboBox.addItem("")
+        self.themeComboBox.addItem("")
+        self.themeComboBox.setObjectName(u"themeComboBox")
+
+        self.verticalLayout.addWidget(self.themeComboBox)
+
         self.exportPushButton = QPushButton(self.groupBox)
         self.exportPushButton.setObjectName(u"exportPushButton")
 
@@ -172,6 +179,9 @@ class Ui_MainWindow(object):
         self.cmapComboBox.setItemText(4, QCoreApplication.translate("MainWindow", u"gray_r", None))
 
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Color map", None))
+        self.themeComboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"dark", None))
+        self.themeComboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"light", None))
+
         self.exportPushButton.setText(QCoreApplication.translate("MainWindow", u"Export image", None))
     # retranslateUi
 
