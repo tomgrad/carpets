@@ -6,6 +6,7 @@ from pyqtgraph import exporters
 import numpy as np
 import neurokit2 as nk
 from pathlib import Path
+import datetime
 
 import utils
 
@@ -157,9 +158,7 @@ class MainWindow(QMainWindow):
             return ""
         R = int(R)
         totalSeconds = self.rpeaks[R]/self.sampling_rate
-        minutes = int(totalSeconds//60)
-        seconds = int(totalSeconds%60)
-        return f"{minutes:02d}:{seconds:02d}\n{R}RR"
+        return f"{datetime.timedelta(seconds=int(totalSeconds))}\n{R}RR"
     
     def _export_image(self):
         name = Path(self.filename).stem + '.png'
