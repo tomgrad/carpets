@@ -70,6 +70,7 @@ class MainWindow(QMainWindow):
         
         self.lead=0
         self.rLead=0
+        self.firstR = 0
         self.left_off = self.sampling_rate
         self.right_off = 3*self.sampling_rate//2
         self.ecg = utils.clean_ecg(self.ecg, self.sampling_rate)
