@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt  # Import matplotlib for colormap
 import pyqtgraph as pg
 from pyqtgraph import exporters
 import numpy as np
-import neurokit2 as nk
 from pathlib import Path
 import datetime
 
@@ -24,7 +23,6 @@ class MainWindow(QMainWindow):
         self.filenameLabel = QLabel()
         statusbar.addWidget(self.filenameLabel)
 
-        # self.ui.signalView.plotItem.setMouseEnabled(y=False)  # Only allow zoom in X-axis
         self.ui.signalView.showGrid(x=True, y=True)
         self.ui.signalView.plotItem.getViewBox().setAutoVisible(y=True)
         self.ui.carpetView.RtoTime = self.RtoTime
@@ -77,7 +75,6 @@ class MainWindow(QMainWindow):
         self.ecg = utils.clean_ecg(self.ecg, self.sampling_rate)
         self.rpeaks = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=0)
 
-        # self.beats = min(self.default_beats, len(self.rpeaks))
         self.beats = len(self.rpeaks)
 
         self.ui.r1spinBox.setRange(0, len(self.rpeaks))
