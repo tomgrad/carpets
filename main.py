@@ -1,16 +1,16 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QLabel
-import matplotlib.pyplot as plt  # Import matplotlib for colormap
 import pyqtgraph as pg
 from pyqtgraph import exporters
 import numpy as np
 from pathlib import Path
 import datetime
-
 import utils
 
 from ui_mainwindow import Ui_MainWindow
 
+# pg.setConfigOption('background', 'k')
+# pg.setConfigOption('foreground', 'w')
 
 class MainWindow(QMainWindow):
 
@@ -39,6 +39,7 @@ class MainWindow(QMainWindow):
         self.ui.carpetView.view.sigRangeChanged.connect(self._panSignal)
         self.ui.rSourceLeadComboBox.currentIndexChanged.connect(self._update_rpeaks)
         self.ui.exportPushButton.clicked.connect(self._export_image)
+        self.ui.themeComboBox.currentIndexChanged.connect(self._set_theme)
 
 
     def _open_file(self, filename=False):
@@ -101,6 +102,23 @@ class MainWindow(QMainWindow):
 
         self.ui.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)
 
+    def _set_theme(self):
+        theme = self.ui.themeComboBox.currentText()
+        if theme == 'dark':
+            self.ui.carpetView.getView().getViewWidget().setBackground('k')
+            self.ui.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('w'))
+            self.ui.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('w'))
+          
+        elif theme == 'light':
+            self.ui.carpetView.getView().getViewWidget().setBackground('w')
+            self.ui.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('k'))
+            self.ui.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('k'))
+
+        else:
+            print(f"Unknown theme: {theme}")
+            return
+   
+    
     def _update_lead(self):
         self.lead = self.ui.leadComboBox.currentIndex()
         T = self.ecg.shape[1] / self.sampling_rate
