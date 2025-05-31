@@ -98,29 +98,12 @@ class MainWindow(QMainWindow):
 
         self.ui.signalView.setXRange(0, self.ecg.shape[1] / self.sampling_rate)
 
-        self._update_lead()
+        self._update_lead(self.lead, reset_range=True)
 
         self.ui.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)
-
-    def _set_theme(self):
-        theme = self.ui.themeComboBox.currentText()
-        if theme == 'dark':
-            self.ui.carpetView.getView().getViewWidget().setBackground('k')
-            self.ui.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('w'))
-            self.ui.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('w'))
-          
-        elif theme == 'light':
-            self.ui.carpetView.getView().getViewWidget().setBackground('w')
-            self.ui.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('k'))
-            self.ui.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('k'))
-
-        else:
-            print(f"Unknown theme: {theme}")
-            return
-   
     
-    def _update_lead(self):
-        self.lead = self.ui.leadComboBox.currentIndex()
+    def _update_lead(self, lead, reset_range=False):
+        self.lead = lead
         T = self.ecg.shape[1] / self.sampling_rate
         mn, mx = np.min(self.ecg[self.lead]), np.max(self.ecg[self.lead])
         p1, p2 = np.percentile(self.ecg[self.lead], [0.5, 99.5])
@@ -133,7 +116,9 @@ class MainWindow(QMainWindow):
         self.ui.signalView.setLimits(xMin=0, xMax=T, yMin=1.1*mn, yMax=1.1*mx)
 
         image, _ = utils.make_carpet(self.ecg[self.lead], self.rpeaks, first_r=self.firstR, beats=self.beats, left_off=self.left_off, right_off=self.right_off)
-        self.ui.carpetView.show(image)
+        self.ui.carpetView.setImage(image.T, autoRange=False)
+        if reset_range==True:
+            self.ui.carpetView.resetRange()
 
         self.ui.carpetView.setLevels(p1, p2)
         hist = self.ui.carpetView.getHistogramWidget()
@@ -175,6 +160,22 @@ class MainWindow(QMainWindow):
         totalSeconds = self.rpeaks[R]/self.sampling_rate
         return f"{datetime.timedelta(seconds=int(totalSeconds))}\n{R}RR"
     
+    def _set_theme(self):
+        theme = self.ui.themeComboBox.currentText()
+        if theme == 'dark':
+            self.ui.carpetView.getView().getViewWidget().setBackground('k')
+            self.ui.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('w'))
+            self.ui.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('w'))
+          
+        elif theme == 'light':
+            self.ui.carpetView.getView().getViewWidget().setBackground('w')
+            self.ui.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('k'))
+            self.ui.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('k'))
+
+        else:
+            print(f"Unknown theme: {theme}")
+            return
+
     def _export_image(self):
         name = Path(self.filename).stem + '.png'
         filename, _ = QFileDialog.getSaveFileName(self, "Save Image", name, "PNG files (*.png);;JPEG files (*.jpg);;All files (*)")

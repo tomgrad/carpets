@@ -9,6 +9,8 @@ class CarpetView(pg.ImageView):
         cm = pg.colormap.getFromMatplotlib('jet')
         self.setColorMap(cm)
         self.view.setMouseEnabled(x=False, y=True)
+        self.view.setAutoVisible(y=False)
+        self.view.setAspectLocked(lock=False)
 
         ax = self.getView().getAxis('left')
         ax.tickStrings = self.tickStrings
@@ -20,15 +22,20 @@ class CarpetView(pg.ImageView):
            [(t.item(), str(int((t-sampling_rate)*1000/sampling_rate))) for t in ticks]
            ])
         
-    def show(self, image):
-            height, width = image.shape
-            self.setImage(image.T)
-            self.view.setLimits(
-                 xMin=-16, xMax=width+16, 
-                 minXRange=width+32, 
-                 maxXRange=width+32, 
-                 yMin=-2, yMax=height+2, 
-                 minYRange=5, maxYRange=height+5)
+    def resetRange(self):
+        width, height = self.getImageItem().image.shape
+
+        self.view.setLimits(
+                xMin=-0.03*width, xMax=1.03*width, 
+                minXRange=1.06*width, 
+                maxXRange=1.06*width, 
+                yMin=-0.03*height, yMax=1.02*height, 
+                minYRange=5, maxYRange=1.05*height
+        )
+        self.view.setRange(
+            xRange=[-0.03*width, 1.03*width], 
+            yRange=[-0.03*height, 1.02*height],
+        )
 
     def RtoTime(self, R):
         return ""
