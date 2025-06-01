@@ -16,10 +16,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QGridLayout,
-    QGroupBox, QLabel, QLayout, QMainWindow,
-    QPushButton, QSizePolicy, QSpinBox, QStatusBar,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
+    QGridLayout, QGroupBox, QLabel, QLayout,
+    QMainWindow, QPushButton, QSizePolicy, QSpinBox,
+    QStatusBar, QVBoxLayout, QWidget)
 
 from carpetview import CarpetView
 from pyqtgraph import PlotWidget
@@ -93,22 +93,22 @@ class Ui_MainWindow(object):
         self.label_3 = QLabel(self.groupBox)
         self.label_3.setObjectName(u"label_3")
 
-        self.formLayout.setWidget(4, QFormLayout.ItemRole.LabelRole, self.label_3)
+        self.formLayout.setWidget(5, QFormLayout.ItemRole.LabelRole, self.label_3)
 
         self.leadComboBox = QComboBox(self.groupBox)
         self.leadComboBox.setObjectName(u"leadComboBox")
 
-        self.formLayout.setWidget(4, QFormLayout.ItemRole.FieldRole, self.leadComboBox)
+        self.formLayout.setWidget(5, QFormLayout.ItemRole.FieldRole, self.leadComboBox)
 
         self.rSourceLeadComboBox = QComboBox(self.groupBox)
         self.rSourceLeadComboBox.setObjectName(u"rSourceLeadComboBox")
 
-        self.formLayout.setWidget(5, QFormLayout.ItemRole.FieldRole, self.rSourceLeadComboBox)
+        self.formLayout.setWidget(6, QFormLayout.ItemRole.FieldRole, self.rSourceLeadComboBox)
 
         self.label_5 = QLabel(self.groupBox)
         self.label_5.setObjectName(u"label_5")
 
-        self.formLayout.setWidget(5, QFormLayout.ItemRole.LabelRole, self.label_5)
+        self.formLayout.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label_5)
 
         self.cmapComboBox = QComboBox(self.groupBox)
         self.cmapComboBox.addItem("")
@@ -118,12 +118,26 @@ class Ui_MainWindow(object):
         self.cmapComboBox.addItem("")
         self.cmapComboBox.setObjectName(u"cmapComboBox")
 
-        self.formLayout.setWidget(6, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
+        self.formLayout.setWidget(7, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
 
         self.label_2 = QLabel(self.groupBox)
         self.label_2.setObjectName(u"label_2")
 
-        self.formLayout.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label_2)
+        self.formLayout.setWidget(7, QFormLayout.ItemRole.LabelRole, self.label_2)
+
+        self.fixedHeightCheckBox = QCheckBox(self.groupBox)
+        self.fixedHeightCheckBox.setObjectName(u"fixedHeightCheckBox")
+
+        self.formLayout.setWidget(4, QFormLayout.ItemRole.LabelRole, self.fixedHeightCheckBox)
+
+        self.fixedHeightSpinBox = QSpinBox(self.groupBox)
+        self.fixedHeightSpinBox.setObjectName(u"fixedHeightSpinBox")
+        self.fixedHeightSpinBox.setMinimum(10)
+        self.fixedHeightSpinBox.setMaximum(1000000)
+        self.fixedHeightSpinBox.setSingleStep(50)
+        self.fixedHeightSpinBox.setValue(250)
+
+        self.formLayout.setWidget(4, QFormLayout.ItemRole.FieldRole, self.fixedHeightSpinBox)
 
 
         self.verticalLayout.addLayout(self.formLayout)
@@ -179,6 +193,7 @@ class Ui_MainWindow(object):
         self.cmapComboBox.setItemText(4, QCoreApplication.translate("MainWindow", u"gray_r", None))
 
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Color map", None))
+        self.fixedHeightCheckBox.setText(QCoreApplication.translate("MainWindow", u"fixed height", None))
         self.themeComboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"dark", None))
         self.themeComboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"light", None))
 

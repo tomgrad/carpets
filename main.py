@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QLabel
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QLabel, QDialog
 import pyqtgraph as pg
 from pyqtgraph import exporters
 import numpy as np
@@ -8,9 +8,12 @@ import datetime
 import utils
 
 from ui_mainwindow import Ui_MainWindow
+from ui_opendialog import Ui_Dialog
 
 # pg.setConfigOption('background', 'k')
 # pg.setConfigOption('foreground', 'w')
+
+
 
 class MainWindow(QMainWindow):
 
@@ -40,7 +43,8 @@ class MainWindow(QMainWindow):
         self.ui.rSourceLeadComboBox.currentIndexChanged.connect(self._update_rpeaks)
         self.ui.exportPushButton.clicked.connect(self._export_image)
         self.ui.themeComboBox.currentIndexChanged.connect(self._set_theme)
-
+        self.ui.fixedHeightCheckBox.stateChanged.connect(self._set_limits)
+        self.ui.fixedHeightSpinBox.valueChanged.connect(lambda: self._set_limits(self.ui.fixedHeightCheckBox.checkState().value))
 
     def _open_file(self, filename=False):
         if filename is False:
@@ -59,10 +63,34 @@ class MainWindow(QMainWindow):
         else:
             return
         
-        self.ecg = record['signal']
+
         self.sampling_rate = record['sampling_rate']
         self.datetime = record['datetime']
         self.leads = record['n_sig']
+        
+        duration = record['sig_len'] // record['sampling_rate']
+
+        if duration > 60 * 60:  # more than 1 hour show dialog
+            ui = Ui_Dialog()
+            dialog = QDialog(self)
+            ui.setupUi(dialog)
+            ui.durationLabel.setText(f"Duration: {datetime.timedelta(seconds=duration)}")
+            ui.fromMinutes.setRange(0, duration // 60)
+            ui.durationMinutes.setRange(1, duration // 60)
+
+            if dialog.exec() == QDialog.Accepted:
+                if ui.preview.isChecked():
+                    self.sampling_rate //= 2
+                    self.ecg = record['signal'][:1, ::2]
+                else:
+                    fromSamples = ui.fromMinutes.value() * 60 * self.sampling_rate
+                    durationSamples = ui.durationMinutes.value() * 60 * self.sampling_rate
+                    self.ecg = record['signal'][:, fromSamples:fromSamples + durationSamples]
+            else:
+                self.ecg = record['signal']
+        else:
+            self.ecg = record['signal']
+       
         
         self.filenameLabel.setText(f'{"/".join(Path(self.filename).parts[-2:])}\t{self.sampling_rate} Hz\t{self.leads} leads')
 
@@ -102,6 +130,7 @@ class MainWindow(QMainWindow):
 
         self.ui.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)
     
+
     def _update_lead(self, lead, reset_range=False):
         self.lead = lead
         T = self.ecg.shape[1] / self.sampling_rate
@@ -119,6 +148,7 @@ class MainWindow(QMainWindow):
         self.ui.carpetView.setImage(image.T, autoRange=False)
         if reset_range==True:
             self.ui.carpetView.resetRange()
+
 
         self.ui.carpetView.setLevels(p1, p2)
         hist = self.ui.carpetView.getHistogramWidget()
@@ -138,6 +168,14 @@ class MainWindow(QMainWindow):
         self.beats = self.ui.r2spinBox.value()
         self._update_lead()
        
+    def _set_limits(self, state):
+        if state == 2:
+            height = self.ui.fixedHeightSpinBox.value()
+            self.ui.carpetView.view.setLimits(minYRange=height, maxYRange=height)
+        else:
+            _, height = self.ui.carpetView.getImageItem().image.shape
+            self.ui.carpetView.view.setLimits(minYRange=5, maxYRange=1.05*height)
+
     def _panSignal(self):
         r_range = self.ui.carpetView.view.viewRange()[1]
         r1, r2 = int(r_range[0]), int(r_range[1])
@@ -181,6 +219,7 @@ class MainWindow(QMainWindow):
         filename, _ = QFileDialog.getSaveFileName(self, "Save Image", name, "PNG files (*.png);;JPEG files (*.jpg);;All files (*)")
         if filename:
             exporter = exporters.ImageExporter(self.ui.carpetView.view)
+            exporter.parameters()['height'] = 1080
             exporter.export(filename)
             print(f"Image saved to {filename}")
 
