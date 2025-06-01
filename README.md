@@ -1,17 +1,19 @@
 # Carpets GUI
 
-Requirements:
+![](screenshot.png)
+
+## Requirements
 - pyside6
 - pyqtgraph
 - neurokit2
 - wfdb
 - ishneholterlib
 
-Supported ECG file formats:
+## Supported ECG file formats
 - wfdb
 - ishne
 
-Run:
+## Running the application
 ```bash
 python main.py
 ```

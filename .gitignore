@@ -5,6 +5,7 @@
 Data
 .vscode/settings.json
 *.png
+!screenshot.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
