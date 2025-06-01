@@ -131,7 +131,7 @@ class MainWindow(QMainWindow):
         self.ui.r2spinBox.setMaximum(len(self.rpeaks))
         self.ui.r1spinBox.setValue(0)
         self.ui.r2spinBox.setValue(self.beats)
-        self._update_lead()
+        self._update_lead(self.lead)
 
     def _update_range(self):
         self.firstR = self.ui.r1spinBox.value()

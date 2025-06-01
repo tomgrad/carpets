@@ -11,14 +11,14 @@ class CarpetView(pg.ImageView):
         self.view.setMouseEnabled(x=False, y=True)
         self.view.setAutoVisible(y=False)
         self.view.setAspectLocked(lock=False)
+        self.view.getAxis('left').setTickDensity(1.25)
 
         ax = self.getView().getAxis('left')
         ax.tickStrings = self.tickStrings
 
     def setXticks(self, left_off, right_off, sampling_rate, num=6):
         ticks = np.linspace(0, left_off+right_off, num)
-        ax = self.getView().getAxis('bottom')
-        ax.setTicks([
+        self.view.getAxis('bottom').setTicks([
            [(t.item(), str(int((t-sampling_rate)*1000/sampling_rate))) for t in ticks]
            ])
         
@@ -30,7 +30,7 @@ class CarpetView(pg.ImageView):
                 minXRange=1.06*width, 
                 maxXRange=1.06*width, 
                 yMin=-0.03*height, yMax=1.02*height, 
-                minYRange=5, maxYRange=1.05*height
+                minYRange=5, maxYRange=1.05*height,
         )
         self.view.setRange(
             xRange=[-0.03*width, 1.03*width], 
