@@ -13,18 +13,12 @@ from ui_opendialog import Ui_Dialog
 # pg.setConfigOption('background', 'k')
 # pg.setConfigOption('foreground', 'w')
 
-
-
 class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
-        statusbar = self.ui.statusbar
-        self.filenameLabel = QLabel()
-        statusbar.addWidget(self.filenameLabel)
 
         self.ui.signalView.showGrid(x=True, y=True)
         self.ui.signalView.plotItem.getViewBox().setAutoVisible(y=True)
@@ -62,7 +56,6 @@ class MainWindow(QMainWindow):
             record = utils.load_csv(self.filename)
         else:
             return
-        
 
         self.sampling_rate = record['sampling_rate']
         self.datetime = record['datetime']
@@ -70,30 +63,37 @@ class MainWindow(QMainWindow):
         
         duration = record['sig_len'] // record['sampling_rate']
 
+        ss = None # start time
+
         if duration > 60 * 60:  # more than 1 hour show dialog
             ui = Ui_Dialog()
             dialog = QDialog(self)
             ui.setupUi(dialog)
             ui.durationLabel.setText(f"Duration: {datetime.timedelta(seconds=duration)}")
-            ui.fromMinutes.setRange(0, duration // 60)
-            ui.durationMinutes.setRange(1, duration // 60)
+            ui.startTimeEdit.setTimeRange(
+                datetime.time(0), datetime.time(max(23, duration // 3600), 59, 59))
 
             if dialog.exec() == QDialog.Accepted:
                 if ui.preview.isChecked():
                     self.sampling_rate //= 2
                     self.ecg = record['signal'][:1, ::2]
                 else:
-                    fromSamples = ui.fromMinutes.value() * 60 * self.sampling_rate
-                    durationSamples = ui.durationMinutes.value() * 60 * self.sampling_rate
-                    self.ecg = record['signal'][:, fromSamples:fromSamples + durationSamples]
+                    ss=ui.startTimeEdit.time()
+                    tt=ui.durationTimeEdit.time()
+                    startSamples = (ss.hour() * 3600 + ss.minute() * 60 + ss.second()) * self.sampling_rate
+                    durationSamples = (tt.hour() * 3600 + tt.minute() * 60 + tt.second()) * self.sampling_rate
+                    self.ecg = record['signal'][:, startSamples:startSamples + durationSamples]
             else:
                 self.ecg = record['signal']
         else:
             self.ecg = record['signal']
        
         
-        self.filenameLabel.setText(f'{"/".join(Path(self.filename).parts[-2:])}\t{self.sampling_rate} Hz\t{self.leads} leads')
-
+        status = f'{"/".join(Path(self.filename).parts[-2:])}\t\t{self.sampling_rate} Hz\t\t{self.leads} leads'
+        if ss is not None:
+            status += f'\t\tStart: {ss.toString("hh:mm:ss")}'
+        self.ui.statusbar.showMessage(status)
+        
         print(f"sampling rate: {self.sampling_rate}, leads: {self.leads}")
         
         self.lead=0
