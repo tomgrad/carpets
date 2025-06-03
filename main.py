@@ -71,7 +71,7 @@ class MainWindow(QMainWindow):
             ui.setupUi(dialog)
             ui.durationLabel.setText(f"Duration: {datetime.timedelta(seconds=duration)}")
             ui.startTimeEdit.setTimeRange(
-                datetime.time(0), datetime.time(max(23, duration // 3600), 59, 59))
+                datetime.time(0), datetime.time(min(23, duration // 3600), 59, 59))
 
             if dialog.exec() == QDialog.Accepted:
                 if ui.preview.isChecked():
@@ -166,7 +166,7 @@ class MainWindow(QMainWindow):
     def _update_range(self):
         self.firstR = self.ui.r1spinBox.value()
         self.beats = self.ui.r2spinBox.value()
-        self._update_lead()
+        self._update_lead(self.lead)
        
     def _set_limits(self, state):
         if state == 2:

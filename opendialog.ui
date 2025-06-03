@@ -90,6 +90,9 @@
      <height>32</height>
     </rect>
    </property>
+   <property name="displayFormat">
+    <string>HH:mm</string>
+   </property>
    <property name="time">
     <time>
      <hour>1</hour>
@@ -106,6 +109,9 @@
      <width>81</width>
      <height>32</height>
     </rect>
+   </property>
+   <property name="displayFormat">
+    <string>HH:mm</string>
    </property>
   </widget>
  </widget>

@@ -59,6 +59,7 @@ class Ui_MainWindow(object):
         self.formLayout.setObjectName(u"formLayout")
         self.openPushButton = QPushButton(self.groupBox)
         self.openPushButton.setObjectName(u"openPushButton")
+        self.openPushButton.setEnabled(True)
 
         self.formLayout.setWidget(0, QFormLayout.ItemRole.SpanningRole, self.openPushButton)
 
@@ -69,6 +70,7 @@ class Ui_MainWindow(object):
 
         self.r1spinBox = QSpinBox(self.groupBox)
         self.r1spinBox.setObjectName(u"r1spinBox")
+        self.r1spinBox.setEnabled(True)
         self.r1spinBox.setSingleStep(60)
 
         self.formLayout.setWidget(1, QFormLayout.ItemRole.FieldRole, self.r1spinBox)
@@ -80,6 +82,7 @@ class Ui_MainWindow(object):
 
         self.r2spinBox = QSpinBox(self.groupBox)
         self.r2spinBox.setObjectName(u"r2spinBox")
+        self.r2spinBox.setEnabled(True)
         self.r2spinBox.setMaximum(256)
         self.r2spinBox.setSingleStep(60)
 
@@ -87,6 +90,7 @@ class Ui_MainWindow(object):
 
         self.updateRangePushButton = QPushButton(self.groupBox)
         self.updateRangePushButton.setObjectName(u"updateRangePushButton")
+        self.updateRangePushButton.setEnabled(True)
 
         self.formLayout.setWidget(3, QFormLayout.ItemRole.SpanningRole, self.updateRangePushButton)
 

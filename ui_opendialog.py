@@ -62,5 +62,7 @@ class Ui_Dialog(object):
         self.label_3.setText(QCoreApplication.translate("Dialog", u"starting from (HH:mm)", None))
         self.durationLabel.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
         self.preview.setText(QCoreApplication.translate("Dialog", u"quick preview", None))
+        self.durationTimeEdit.setDisplayFormat(QCoreApplication.translate("Dialog", u"HH:mm", None))
+        self.startTimeEdit.setDisplayFormat(QCoreApplication.translate("Dialog", u"HH:mm", None))
     # retranslateUi
 
