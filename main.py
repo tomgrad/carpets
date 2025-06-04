@@ -90,8 +90,9 @@ class MainWindow(QMainWindow):
        
         
         status = f'{"/".join(Path(self.filename).parts[-2:])}\t\t{self.sampling_rate} Hz\t\t{self.leads} leads'
+        status += f"\t\tStart: {str(self.datetime).split()[-1]}"
         if ss is not None:
-            status += f'\t\tStart: {ss.toString("hh:mm:ss")}'
+            status += f'\t\toffset: +{ss.toString("hh:mm:ss")}'
         self.ui.statusbar.showMessage(status)
         
         print(f"sampling rate: {self.sampling_rate}, leads: {self.leads}")
