@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
     def _open_file(self, filename=False):
         if filename is False:
             self.filename, _ = QFileDialog.getOpenFileName(self, "Open ECG", "",
-                                                       "ECG files (*.ecg *.hea *.csv *.ISHNE);;Ishne ECG (*.ecg *.ISHNE);;WFDB (MIT) ECG (*.hea)"
+                                                       "ECG files (*.ecg *.hea *.dat *.ISHNE);;Ishne ECG (*.ecg *.ISHNE);;WFDB (MIT) ECG (*.hea);;AMEDTEC ECGPro (*.dat)"
                                                        )
         else:
             self.filename = filename
@@ -52,6 +52,8 @@ class MainWindow(QMainWindow):
             record = utils.load_ishne(self.filename)
         elif file_ext == 'hea':
             record = utils.load_wfdb(self.filename)
+        elif file_ext == 'dat':
+            record = utils.load_amedtec_ecgpro(self.filename)
         elif file_ext == 'csv':
             record = utils.load_csv(self.filename)
         else:

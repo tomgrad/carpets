@@ -12,6 +12,7 @@
 ## Supported ECG file formats
 - wfdb
 - ishne
+- AMEDTEC ECGPro
 
 ## Running the application
 ```bash

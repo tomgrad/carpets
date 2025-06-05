@@ -1,6 +1,6 @@
-import os
 from os.path import exists
-from datetime import datetime, timedelta
+from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 from ishneholterlib import Holter
@@ -53,6 +53,32 @@ def load_wfdb(filename):
             'datetime': dt,
             'n_sig': record.n_sig,
             'sig_name': record.sig_name}
+
+
+def load_amedtec_ecgpro(filename):
+    record=dict()
+    with open(filename, 'rb') as f:
+        header = f.read(988)
+        record['record_name'] = Path(filename).stem
+        
+        dt=header[384:403].decode('utf-8')
+        record['datetime'] = datetime.strptime(dt, '%d.%m.%Y %H:%M:%S')
+        record['sampling_rate'] = int(header[834:838].decode('utf-8'))
+        LSBperMV = header[839:843].decode('utf-8')
+        fileVersion = header[987]
+        record['sig_len'] = int.from_bytes(f.read(4), 'little')
+        record['n_sig'] = int.from_bytes(f.read(2), 'little')
+        # channelCodes = [int(x) for x in np.frombuffer(f.read(15*2), dtype=np.int16)]
+        record['sig_name'] = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6']
+
+        dt = np.int16 if fileVersion == 1 else np.int32
+        word_size = 2 if fileVersion == 1 else 4
+
+        ecg = np.frombuffer(f.read(record['n_sig']*record['sig_len']*word_size), dtype=dt)
+        ecg = ecg.reshape(-1, record['n_sig']) / int(LSBperMV)
+        record['signal'] = ecg.T
+    return record
+
 
 def clean_ecg(ecg, sampling_rate):
     clean = np.stack([nk.ecg_clean(sig, sampling_rate=sampling_rate) for sig in ecg])
