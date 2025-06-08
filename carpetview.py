@@ -2,7 +2,7 @@ import pyqtgraph as pg
 import numpy as np
 
 class CarpetView(pg.ImageView):
-    def __init__(self, parent=None, view=None):
+    def __init__(self, parent=None):
         super().__init__(parent, view=pg.PlotItem())
         self.ui.menuBtn.hide()
         self.ui.roiBtn.hide()

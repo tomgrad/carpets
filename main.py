@@ -32,7 +32,6 @@ class MainWindow(QMainWindow):
         self.ui.openPushButton.clicked.connect(self._open_file)
         self.ui.cmapComboBox.currentIndexChanged.connect(self._update_cmap)
         self.ui.leadComboBox.currentIndexChanged.connect(self._update_lead)
-        self.ui.updateRangePushButton.clicked.connect(self._update_range)
         self.ui.carpetView.view.sigRangeChanged.connect(self._panSignal)
         self.ui.rSourceLeadComboBox.currentIndexChanged.connect(self._update_rpeaks)
         self.ui.exportPushButton.clicked.connect(self._export_image)
@@ -106,14 +105,7 @@ class MainWindow(QMainWindow):
         self.right_off = 3*self.sampling_rate//2
         self.ecg = utils.clean_ecg(self.ecg, self.sampling_rate)
         self.rpeaks = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=0)
-
         self.beats = len(self.rpeaks)
-
-        self.ui.r1spinBox.setRange(0, len(self.rpeaks))
-        self.ui.r1spinBox.setValue(0)
-        self.ui.r2spinBox.setRange(8, len(self.rpeaks))
-        self.ui.r2spinBox.setValue(self.beats)
-        self.ui.r2spinBox.setSingleStep(max(1, len(self.rpeaks) // 50))  # Set single step to 1% of total R-peaks
    
         self.ui.leadComboBox.blockSignals(True) # prevent _update_signal() from being triggered
         self.ui.leadComboBox.clear()
@@ -160,17 +152,8 @@ class MainWindow(QMainWindow):
     def _update_rpeaks(self):
         self.rLead = self.ui.rSourceLeadComboBox.currentIndex()
         self.rpeaks = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=self.rLead)
-        self.ui.r1spinBox.setMaximum(len(self.rpeaks))
-        self.ui.r2spinBox.setMaximum(len(self.rpeaks))
-        self.ui.r1spinBox.setValue(0)
-        self.ui.r2spinBox.setValue(self.beats)
         self._update_lead(self.lead)
-
-    def _update_range(self):
-        self.firstR = self.ui.r1spinBox.value()
-        self.beats = self.ui.r2spinBox.value()
-        self._update_lead(self.lead)
-       
+      
     def _set_limits(self, state):
         if state == 2:
             height = self.ui.fixedHeightSpinBox.value()

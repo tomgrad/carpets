@@ -63,56 +63,44 @@ class Ui_MainWindow(object):
 
         self.formLayout.setWidget(0, QFormLayout.ItemRole.SpanningRole, self.openPushButton)
 
-        self.label_4 = QLabel(self.groupBox)
-        self.label_4.setObjectName(u"label_4")
+        self.fixedHeightCheckBox = QCheckBox(self.groupBox)
+        self.fixedHeightCheckBox.setObjectName(u"fixedHeightCheckBox")
 
-        self.formLayout.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_4)
+        self.formLayout.setWidget(1, QFormLayout.ItemRole.LabelRole, self.fixedHeightCheckBox)
 
-        self.r1spinBox = QSpinBox(self.groupBox)
-        self.r1spinBox.setObjectName(u"r1spinBox")
-        self.r1spinBox.setEnabled(True)
-        self.r1spinBox.setSingleStep(60)
+        self.fixedHeightSpinBox = QSpinBox(self.groupBox)
+        self.fixedHeightSpinBox.setObjectName(u"fixedHeightSpinBox")
+        self.fixedHeightSpinBox.setMinimum(10)
+        self.fixedHeightSpinBox.setMaximum(1000000)
+        self.fixedHeightSpinBox.setSingleStep(50)
+        self.fixedHeightSpinBox.setValue(250)
 
-        self.formLayout.setWidget(1, QFormLayout.ItemRole.FieldRole, self.r1spinBox)
-
-        self.label = QLabel(self.groupBox)
-        self.label.setObjectName(u"label")
-
-        self.formLayout.setWidget(2, QFormLayout.ItemRole.LabelRole, self.label)
-
-        self.r2spinBox = QSpinBox(self.groupBox)
-        self.r2spinBox.setObjectName(u"r2spinBox")
-        self.r2spinBox.setEnabled(True)
-        self.r2spinBox.setMaximum(256)
-        self.r2spinBox.setSingleStep(60)
-
-        self.formLayout.setWidget(2, QFormLayout.ItemRole.FieldRole, self.r2spinBox)
-
-        self.updateRangePushButton = QPushButton(self.groupBox)
-        self.updateRangePushButton.setObjectName(u"updateRangePushButton")
-        self.updateRangePushButton.setEnabled(True)
-
-        self.formLayout.setWidget(3, QFormLayout.ItemRole.SpanningRole, self.updateRangePushButton)
+        self.formLayout.setWidget(1, QFormLayout.ItemRole.FieldRole, self.fixedHeightSpinBox)
 
         self.label_3 = QLabel(self.groupBox)
         self.label_3.setObjectName(u"label_3")
 
-        self.formLayout.setWidget(5, QFormLayout.ItemRole.LabelRole, self.label_3)
+        self.formLayout.setWidget(2, QFormLayout.ItemRole.LabelRole, self.label_3)
 
         self.leadComboBox = QComboBox(self.groupBox)
         self.leadComboBox.setObjectName(u"leadComboBox")
 
-        self.formLayout.setWidget(5, QFormLayout.ItemRole.FieldRole, self.leadComboBox)
-
-        self.rSourceLeadComboBox = QComboBox(self.groupBox)
-        self.rSourceLeadComboBox.setObjectName(u"rSourceLeadComboBox")
-
-        self.formLayout.setWidget(6, QFormLayout.ItemRole.FieldRole, self.rSourceLeadComboBox)
+        self.formLayout.setWidget(2, QFormLayout.ItemRole.FieldRole, self.leadComboBox)
 
         self.label_5 = QLabel(self.groupBox)
         self.label_5.setObjectName(u"label_5")
 
-        self.formLayout.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label_5)
+        self.formLayout.setWidget(3, QFormLayout.ItemRole.LabelRole, self.label_5)
+
+        self.rSourceLeadComboBox = QComboBox(self.groupBox)
+        self.rSourceLeadComboBox.setObjectName(u"rSourceLeadComboBox")
+
+        self.formLayout.setWidget(3, QFormLayout.ItemRole.FieldRole, self.rSourceLeadComboBox)
+
+        self.label_2 = QLabel(self.groupBox)
+        self.label_2.setObjectName(u"label_2")
+
+        self.formLayout.setWidget(4, QFormLayout.ItemRole.LabelRole, self.label_2)
 
         self.cmapComboBox = QComboBox(self.groupBox)
         self.cmapComboBox.addItem("")
@@ -122,26 +110,7 @@ class Ui_MainWindow(object):
         self.cmapComboBox.addItem("")
         self.cmapComboBox.setObjectName(u"cmapComboBox")
 
-        self.formLayout.setWidget(7, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
-
-        self.label_2 = QLabel(self.groupBox)
-        self.label_2.setObjectName(u"label_2")
-
-        self.formLayout.setWidget(7, QFormLayout.ItemRole.LabelRole, self.label_2)
-
-        self.fixedHeightCheckBox = QCheckBox(self.groupBox)
-        self.fixedHeightCheckBox.setObjectName(u"fixedHeightCheckBox")
-
-        self.formLayout.setWidget(4, QFormLayout.ItemRole.LabelRole, self.fixedHeightCheckBox)
-
-        self.fixedHeightSpinBox = QSpinBox(self.groupBox)
-        self.fixedHeightSpinBox.setObjectName(u"fixedHeightSpinBox")
-        self.fixedHeightSpinBox.setMinimum(10)
-        self.fixedHeightSpinBox.setMaximum(1000000)
-        self.fixedHeightSpinBox.setSingleStep(50)
-        self.fixedHeightSpinBox.setValue(250)
-
-        self.formLayout.setWidget(4, QFormLayout.ItemRole.FieldRole, self.fixedHeightSpinBox)
+        self.formLayout.setWidget(4, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
 
 
         self.verticalLayout.addLayout(self.formLayout)
@@ -185,19 +154,16 @@ class Ui_MainWindow(object):
         self.actionQuit.setText(QCoreApplication.translate("MainWindow", u"&Quit", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Options", None))
         self.openPushButton.setText(QCoreApplication.translate("MainWindow", u"Open file", None))
-        self.label_4.setText(QCoreApplication.translate("MainWindow", u"first R", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"beats", None))
-        self.updateRangePushButton.setText(QCoreApplication.translate("MainWindow", u"Update range", None))
+        self.fixedHeightCheckBox.setText(QCoreApplication.translate("MainWindow", u"fixed height", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Lead", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"R source", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Color map", None))
         self.cmapComboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"jet", None))
         self.cmapComboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"seismic", None))
         self.cmapComboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"bwr", None))
         self.cmapComboBox.setItemText(3, QCoreApplication.translate("MainWindow", u"gray", None))
         self.cmapComboBox.setItemText(4, QCoreApplication.translate("MainWindow", u"gray_r", None))
 
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Color map", None))
-        self.fixedHeightCheckBox.setText(QCoreApplication.translate("MainWindow", u"fixed height", None))
         self.themeComboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"dark", None))
         self.themeComboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"light", None))
 
