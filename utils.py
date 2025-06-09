@@ -1,4 +1,3 @@
-from os.path import exists
 from datetime import datetime
 from pathlib import Path
 

@@ -46,11 +46,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.carpetView, 0, 0, 1, 1)
 
-        self.signalView = PlotWidget(self.centralwidget)
-        self.signalView.setObjectName(u"signalView")
-
-        self.gridLayout.addWidget(self.signalView, 1, 0, 1, 1)
-
         self.groupBox = QGroupBox(self.centralwidget)
         self.groupBox.setObjectName(u"groupBox")
         self.verticalLayout = QVBoxLayout(self.groupBox)
@@ -122,13 +117,23 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.themeComboBox)
 
-        self.exportPushButton = QPushButton(self.groupBox)
-        self.exportPushButton.setObjectName(u"exportPushButton")
+        self.exportImagePushButton = QPushButton(self.groupBox)
+        self.exportImagePushButton.setObjectName(u"exportImagePushButton")
 
-        self.verticalLayout.addWidget(self.exportPushButton)
+        self.verticalLayout.addWidget(self.exportImagePushButton)
+
+        self.exportPeaksPushButton = QPushButton(self.groupBox)
+        self.exportPeaksPushButton.setObjectName(u"exportPeaksPushButton")
+
+        self.verticalLayout.addWidget(self.exportPeaksPushButton)
 
 
         self.gridLayout.addWidget(self.groupBox, 0, 1, 1, 1)
+
+        self.signalView = PlotWidget(self.centralwidget)
+        self.signalView.setObjectName(u"signalView")
+
+        self.gridLayout.addWidget(self.signalView, 1, 0, 1, 2)
 
         self.gridLayout.setRowStretch(0, 3)
         self.gridLayout.setRowStretch(1, 1)
@@ -167,6 +172,7 @@ class Ui_MainWindow(object):
         self.themeComboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"dark", None))
         self.themeComboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"light", None))
 
-        self.exportPushButton.setText(QCoreApplication.translate("MainWindow", u"Export image", None))
+        self.exportImagePushButton.setText(QCoreApplication.translate("MainWindow", u"Export image", None))
+        self.exportPeaksPushButton.setText(QCoreApplication.translate("MainWindow", u"Export R peaks", None))
     # retranslateUi
 

@@ -27,9 +27,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="PlotWidget" name="signalView"/>
-      </item>
       <item row="0" column="1">
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
@@ -144,14 +141,24 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="exportPushButton">
+          <widget class="QPushButton" name="exportImagePushButton">
            <property name="text">
             <string>Export image</string>
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="exportPeaksPushButton">
+           <property name="text">
+            <string>Export R peaks</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="PlotWidget" name="signalView"/>
       </item>
      </layout>
     </item>
