@@ -78,7 +78,14 @@ class MainWindow(QMainWindow):
         ui.partialRadioButton.toggled.connect(lambda state: ui.durationTimeEdit.setEnabled(state))
         self.ui.exportPeaksPushButton.setEnabled(True)
 
+        # check i .rpeaks file exists
+        rpeaks_file = Path(self.filename).with_suffix('.rpeaks')
+        if rpeaks_file.exists():
+            ui.peaksRadioButton.setEnabled(True)
+
         ss = None # start time
+
+        self.rpeaks = [[]]*self.leads
 
         if dialog.exec() == QDialog.Accepted:
             if ui.previewRadioButton.isChecked():
@@ -93,6 +100,11 @@ class MainWindow(QMainWindow):
                 durationSamples = (tt.hour() * 3600 + tt.minute() * 60 + tt.second()) * self.sampling_rate
                 self.ecg = record['signal'][:, startSamples:startSamples + durationSamples]
                 self.ui.exportPeaksPushButton.setEnabled(False)
+            elif ui.peaksRadioButton.isChecked():
+                self.ecg = record['signal']
+                with open(rpeaks_file, 'r') as f:
+                    rpeaks = f.readlines()
+                self.rpeaks = [np.array(list(map(int, line.strip().split()))) for line in rpeaks]
             else:
                 self.ecg = record['signal']
         else:
@@ -104,14 +116,14 @@ class MainWindow(QMainWindow):
             status += f'\toffset: +{ss.toString("hh:mm:ss")}'
         self.statusLabel.setText(status)
         
-        self.rpeaks = [[]]*self.leads
 
         self.lead=0
         self.rLead=0
         self.left_off = self.sampling_rate
         self.right_off = 3*self.sampling_rate//2
         self.ecg = utils.clean_ecg(self.ecg, self.sampling_rate)
-        self.rpeaks[0] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=0)
+        if len(self.rpeaks[0]) == 0:
+            self.rpeaks[0] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=0)
         self.beats = len(self.rpeaks[0])
    
         self.ui.leadComboBox.blockSignals(True) # prevent _update_signal() from being triggered
@@ -127,11 +139,8 @@ class MainWindow(QMainWindow):
         self.ui.rSourceLeadComboBox.blockSignals(False)
 
         self.connect_signals()
-
         self.ui.signalView.setXRange(0, self.ecg.shape[1] / self.sampling_rate)
-
         self._update_lead(self.lead, reset_range=True)
-
         self.ui.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)
     
 
