@@ -30,68 +30,74 @@ class MainWindow(QMainWindow):
         self.statusLabel = QLabel("Open an ECG file to start")
         self.ui.statusbar.addPermanentWidget(self.statusLabel)
         self.ui.openPushButton.clicked.connect(self._open_file)
+        self.ui.cmapComboBox.currentIndexChanged.connect(self._update_cmap)
+        self.ui.themeComboBox.currentIndexChanged.connect(self._set_theme)
 
     def connect_signals(self):
-        self.ui.cmapComboBox.currentIndexChanged.connect(self._update_cmap)
         self.ui.leadComboBox.currentIndexChanged.connect(self._update_lead)
         self.ui.carpetView.view.sigRangeChanged.connect(self._panSignal)
         self.ui.rSourceLeadComboBox.currentIndexChanged.connect(self._update_rpeaks)
         self.ui.exportImagePushButton.clicked.connect(self._export_image)
         self.ui.exportPeaksPushButton.clicked.connect(self._export_peaks)
-        self.ui.themeComboBox.currentIndexChanged.connect(self._set_theme)
         self.ui.fixedHeightCheckBox.stateChanged.connect(self._set_limits)
         self.ui.fixedHeightSpinBox.valueChanged.connect(lambda: self._set_limits(self.ui.fixedHeightCheckBox.checkState().value))
 
     def _open_file(self, filename=False):
         if filename is False:
-            self.filename, _ = QFileDialog.getOpenFileName(self, "Open ECG", "",
+            filename, _ = QFileDialog.getOpenFileName(self, "Open ECG", "",
                                                        "ECG files (*.ecg *.hea *.dat *.ISHNE);;Ishne ECG (*.ecg *.ISHNE);;WFDB (MIT) ECG (*.hea);;AMEDTEC ECGPro (*.dat)"
                                                        )
-        else:
-            self.filename = filename
-        file_ext = self.filename.split('.')[-1]
+
+        file_ext = filename.split('.')[-1]
         if file_ext == 'ecg' or file_ext == 'ISHNE':
-            record = utils.load_ishne(self.filename)
+            record = utils.load_ishne(filename)
         elif file_ext == 'hea':
-            record = utils.load_wfdb(self.filename)
+            record = utils.load_wfdb(filename)
         elif file_ext == 'dat':
-            record = utils.load_amedtec_ecgpro(self.filename)
+            record = utils.load_amedtec_ecgpro(filename)
         elif file_ext == 'csv':
-            record = utils.load_csv(self.filename)
+            record = utils.load_csv(filename)
         else:
             return
+
+        self.filename = filename
 
         self.sampling_rate = record['sampling_rate']
         self.datetime = record['datetime']
         self.leads = record['n_sig']
-        
         duration = record['sig_len'] // record['sampling_rate']
+
+        ui = Ui_Dialog()
+        dialog = QDialog(self)
+        ui.setupUi(dialog)
+        ui.durationLabel.setText(f"Duration: {datetime.timedelta(seconds=duration)}")
+        ui.startTimeEdit.setTimeRange(
+            datetime.time(0), datetime.time(min(23, duration // 3600), 59, 59))
+
+        ui.partialRadioButton.toggled.connect(lambda state: ui.startTimeEdit.setEnabled(state))
+        ui.partialRadioButton.toggled.connect(lambda state: ui.durationTimeEdit.setEnabled(state))
+        self.ui.exportPeaksPushButton.setEnabled(True)
 
         ss = None # start time
 
-        if duration > 60 * 60:  # more than 1 hour show dialog
-            ui = Ui_Dialog()
-            dialog = QDialog(self)
-            ui.setupUi(dialog)
-            ui.durationLabel.setText(f"Duration: {datetime.timedelta(seconds=duration)}")
-            ui.startTimeEdit.setTimeRange(
-                datetime.time(0), datetime.time(min(23, duration // 3600), 59, 59))
-
-            if dialog.exec() == QDialog.Accepted:
-                if ui.preview.isChecked():
-                    self.sampling_rate //= 2
-                    self.ecg = record['signal'][:1, ::2]
-                else:
-                    ss=ui.startTimeEdit.time()
-                    tt=ui.durationTimeEdit.time()
-                    startSamples = (ss.hour() * 3600 + ss.minute() * 60 + ss.second()) * self.sampling_rate
-                    durationSamples = (tt.hour() * 3600 + tt.minute() * 60 + tt.second()) * self.sampling_rate
-                    self.ecg = record['signal'][:, startSamples:startSamples + durationSamples]
+        if dialog.exec() == QDialog.Accepted:
+            if ui.previewRadioButton.isChecked():
+                self.sampling_rate //= 2
+                self.ecg = record['signal'][:1, ::2]
+                record['sig_name'] = record['sig_name'][:1]
+                self.ui.exportPeaksPushButton.setEnabled(False)
+            elif ui.partialRadioButton.isChecked():
+                ss=ui.startTimeEdit.time()
+                tt=ui.durationTimeEdit.time()
+                startSamples = (ss.hour() * 3600 + ss.minute() * 60 + ss.second()) * self.sampling_rate
+                durationSamples = (tt.hour() * 3600 + tt.minute() * 60 + tt.second()) * self.sampling_rate
+                self.ecg = record['signal'][:, startSamples:startSamples + durationSamples]
+                self.ui.exportPeaksPushButton.setEnabled(False)
             else:
                 self.ecg = record['signal']
         else:
-            self.ecg = record['signal']
-       
+            return
+      
         status = f'{"/".join(Path(self.filename).parts[-2:])}\t{self.sampling_rate} Hz\t{self.leads} leads'
         status += f"\tStart: {str(self.datetime).split()[-1]}"
         if ss is not None:
