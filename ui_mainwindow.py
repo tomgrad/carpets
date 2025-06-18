@@ -16,10 +16,11 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
-    QGridLayout, QGroupBox, QLabel, QLayout,
+from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QCheckBox, QComboBox,
+    QFormLayout, QGroupBox, QHBoxLayout, QLabel,
     QMainWindow, QPushButton, QSizePolicy, QSpacerItem,
-    QSpinBox, QStatusBar, QVBoxLayout, QWidget)
+    QSpinBox, QSplitter, QStatusBar, QVBoxLayout,
+    QWidget)
 
 from carpetview import CarpetView
 from pyqtgraph import PlotWidget
@@ -35,16 +36,31 @@ class Ui_MainWindow(object):
         self.actionQuit.setObjectName(u"actionQuit")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.gridLayout_2 = QGridLayout(self.centralwidget)
-        self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.gridLayout = QGridLayout()
-        self.gridLayout.setObjectName(u"gridLayout")
-        self.gridLayout.setSizeConstraint(QLayout.SizeConstraint.SetMaximumSize)
-        self.carpetView = CarpetView(self.centralwidget)
+        self.horizontalLayout = QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.splitter = QSplitter(self.centralwidget)
+        self.splitter.setObjectName(u"splitter")
+        self.splitter.setOrientation(Qt.Orientation.Vertical)
+        self.carpetView = CarpetView(self.splitter)
         self.carpetView.setObjectName(u"carpetView")
         self.carpetView.setEnabled(True)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(3)
+        sizePolicy.setHeightForWidth(self.carpetView.sizePolicy().hasHeightForWidth())
+        self.carpetView.setSizePolicy(sizePolicy)
+        self.splitter.addWidget(self.carpetView)
+        self.signalView = PlotWidget(self.splitter)
+        self.signalView.setObjectName(u"signalView")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(1)
+        sizePolicy1.setHeightForWidth(self.signalView.sizePolicy().hasHeightForWidth())
+        self.signalView.setSizePolicy(sizePolicy1)
+        self.signalView.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustIgnored)
+        self.splitter.addWidget(self.signalView)
 
-        self.gridLayout.addWidget(self.carpetView, 0, 0, 1, 1)
+        self.horizontalLayout.addWidget(self.splitter)
 
         self.groupBox = QGroupBox(self.centralwidget)
         self.groupBox.setObjectName(u"groupBox")
@@ -92,10 +108,14 @@ class Ui_MainWindow(object):
 
         self.formLayout.setWidget(3, QFormLayout.ItemRole.FieldRole, self.rSourceLeadComboBox)
 
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.formLayout.setItem(5, QFormLayout.ItemRole.FieldRole, self.verticalSpacer)
+
         self.label_2 = QLabel(self.groupBox)
         self.label_2.setObjectName(u"label_2")
 
-        self.formLayout.setWidget(5, QFormLayout.ItemRole.LabelRole, self.label_2)
+        self.formLayout.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label_2)
 
         self.cmapComboBox = QComboBox(self.groupBox)
         self.cmapComboBox.addItem("")
@@ -105,12 +125,12 @@ class Ui_MainWindow(object):
         self.cmapComboBox.addItem("")
         self.cmapComboBox.setObjectName(u"cmapComboBox")
 
-        self.formLayout.setWidget(5, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
+        self.formLayout.setWidget(6, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
 
         self.label = QLabel(self.groupBox)
         self.label.setObjectName(u"label")
 
-        self.formLayout.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label)
+        self.formLayout.setWidget(7, QFormLayout.ItemRole.LabelRole, self.label)
 
         self.fontSizeSpinBox = QSpinBox(self.groupBox)
         self.fontSizeSpinBox.setObjectName(u"fontSizeSpinBox")
@@ -118,23 +138,19 @@ class Ui_MainWindow(object):
         self.fontSizeSpinBox.setMaximum(36)
         self.fontSizeSpinBox.setValue(10)
 
-        self.formLayout.setWidget(6, QFormLayout.ItemRole.FieldRole, self.fontSizeSpinBox)
+        self.formLayout.setWidget(7, QFormLayout.ItemRole.FieldRole, self.fontSizeSpinBox)
 
         self.label_4 = QLabel(self.groupBox)
         self.label_4.setObjectName(u"label_4")
 
-        self.formLayout.setWidget(7, QFormLayout.ItemRole.LabelRole, self.label_4)
+        self.formLayout.setWidget(8, QFormLayout.ItemRole.LabelRole, self.label_4)
 
         self.themeComboBox = QComboBox(self.groupBox)
         self.themeComboBox.addItem("")
         self.themeComboBox.addItem("")
         self.themeComboBox.setObjectName(u"themeComboBox")
 
-        self.formLayout.setWidget(7, QFormLayout.ItemRole.FieldRole, self.themeComboBox)
-
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.formLayout.setItem(4, QFormLayout.ItemRole.FieldRole, self.verticalSpacer)
+        self.formLayout.setWidget(8, QFormLayout.ItemRole.FieldRole, self.themeComboBox)
 
 
         self.verticalLayout.addLayout(self.formLayout)
@@ -150,21 +166,10 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.exportPeaksPushButton)
 
 
-        self.gridLayout.addWidget(self.groupBox, 0, 1, 1, 1)
+        self.horizontalLayout.addWidget(self.groupBox)
 
-        self.signalView = PlotWidget(self.centralwidget)
-        self.signalView.setObjectName(u"signalView")
-
-        self.gridLayout.addWidget(self.signalView, 1, 0, 1, 2)
-
-        self.gridLayout.setRowStretch(0, 3)
-        self.gridLayout.setRowStretch(1, 1)
-        self.gridLayout.setColumnStretch(0, 10)
-        self.gridLayout.setColumnStretch(1, 1)
-        self.gridLayout.setColumnMinimumWidth(1, 180)
-
-        self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
-
+        self.horizontalLayout.setStretch(0, 5)
+        self.horizontalLayout.setStretch(1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")

@@ -24,6 +24,9 @@ class MainWindow(QMainWindow):
         self.ui.signalView.plotItem.getViewBox().setAutoVisible(y=True)
         self.ui.carpetView.RtoTime = self.RtoTime
 
+        self.ui.carpetView.setEnabled(False)
+        self.ui.signalView.setEnabled(False)
+
         self.rpeaks = [np.array([])]
         self.rLead = 0
         self.sampling_rate = 1
@@ -69,7 +72,7 @@ class MainWindow(QMainWindow):
         ui = Ui_Dialog()
         dialog = QDialog(self)
         ui.setupUi(dialog)
-        ui.durationLabel.setText(f"Duration: {datetime.timedelta(seconds=duration)}")
+        ui.durationLabel.setText(f"Duration: {datetime.timedelta(seconds=duration)}  SR: {self.sampling_rate} Hz  Leads: {self.leads}")
         ui.startTimeEdit.setTimeRange(
             datetime.time(0), datetime.time(min(23, duration // 3600), 59, 59))
 
@@ -136,6 +139,9 @@ class MainWindow(QMainWindow):
             self.ui.rSourceLeadComboBox.addItem(label)
         self.ui.rSourceLeadComboBox.blockSignals(False)
 
+        self.ui.carpetView.setEnabled(True)
+        self.ui.signalView.setEnabled(True)
+        self.ui.fixedHeightCheckBox.setChecked(False)
         self.ui.signalView.setXRange(0, self.ecg.shape[1] / self.sampling_rate)
         self._update_lead(self.lead, reset_range=True)
         self.ui.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)

@@ -14,193 +14,205 @@
    <string>Dywaniki</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout" rowstretch="3,1" columnstretch="10,1" columnminimumwidth="0,180">
-      <property name="sizeConstraint">
-       <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="5,1">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Orientation::Vertical</enum>
       </property>
-      <item row="0" column="0">
-       <widget class="CarpetView" name="carpetView">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QGroupBox" name="groupBox">
-        <property name="title">
-         <string>Options</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <layout class="QFormLayout" name="formLayout">
-           <item row="0" column="0" colspan="2">
-            <widget class="QPushButton" name="openPushButton">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>Open file</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="fixedHeightCheckBox">
-             <property name="text">
-              <string>fixed height</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QSpinBox" name="fixedHeightSpinBox">
-             <property name="minimum">
-              <number>10</number>
-             </property>
-             <property name="maximum">
-              <number>1000000</number>
-             </property>
-             <property name="singleStep">
-              <number>50</number>
-             </property>
-             <property name="value">
-              <number>250</number>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Lead</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QComboBox" name="leadComboBox"/>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>R source</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QComboBox" name="rSourceLeadComboBox"/>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Color map</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QComboBox" name="cmapComboBox">
-             <item>
-              <property name="text">
-               <string>jet</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>seismic</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>bwr</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>gray</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>gray_r</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Font size</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="1">
-            <widget class="QSpinBox" name="fontSizeSpinBox">
-             <property name="minimum">
-              <number>5</number>
-             </property>
-             <property name="maximum">
-              <number>36</number>
-             </property>
-             <property name="value">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>Theme</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="1">
-            <widget class="QComboBox" name="themeComboBox">
-             <item>
-              <property name="text">
-               <string>dark</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>light</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Orientation::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QPushButton" name="exportImagePushButton">
+      <widget class="CarpetView" name="carpetView">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>3</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+      <widget class="PlotWidget" name="signalView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Options</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0" colspan="2">
+          <widget class="QPushButton" name="openPushButton">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="text">
-            <string>Export image</string>
+            <string>Open file</string>
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QPushButton" name="exportPeaksPushButton">
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="fixedHeightCheckBox">
            <property name="text">
-            <string>Export R peaks</string>
+            <string>fixed height</string>
            </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="fixedHeightSpinBox">
+           <property name="minimum">
+            <number>10</number>
+           </property>
+           <property name="maximum">
+            <number>1000000</number>
+           </property>
+           <property name="singleStep">
+            <number>50</number>
+           </property>
+           <property name="value">
+            <number>250</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Lead</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="leadComboBox"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>R source</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QComboBox" name="rSourceLeadComboBox"/>
+         </item>
+         <item row="5" column="1">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Color map</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QComboBox" name="cmapComboBox">
+           <item>
+            <property name="text">
+             <string>jet</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>seismic</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>bwr</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>gray</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>gray_r</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Font size</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QSpinBox" name="fontSizeSpinBox">
+           <property name="minimum">
+            <number>5</number>
+           </property>
+           <property name="maximum">
+            <number>36</number>
+           </property>
+           <property name="value">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Theme</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QComboBox" name="themeComboBox">
+           <item>
+            <property name="text">
+             <string>dark</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>light</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="PlotWidget" name="signalView"/>
-      </item>
-     </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="exportImagePushButton">
+         <property name="text">
+          <string>Export image</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="exportPeaksPushButton">
+         <property name="text">
+          <string>Export R peaks</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
   </widget>

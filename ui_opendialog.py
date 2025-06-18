@@ -83,7 +83,7 @@ class Ui_Dialog(object):
     # setupUi
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
+        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Import", None))
         self.label.setText(QCoreApplication.translate("Dialog", u"Import only (HH:mm)", None))
         self.label_3.setText(QCoreApplication.translate("Dialog", u"starting from (HH:mm)", None))
         self.durationLabel.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
