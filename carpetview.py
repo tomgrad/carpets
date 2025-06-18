@@ -22,6 +22,11 @@ class CarpetView(pg.ImageView):
            [(t.item(), str(int((t-sampling_rate)*1000/sampling_rate))) for t in ticks]
            ])
         
+    def setFontSize(self, size):
+        font = pg.QtGui.QFont('sans', size)
+        self.view.getAxis('left').setTickFont(font)
+        self.view.getAxis('bottom').setTickFont(font)
+    
     def resetRange(self):
         width, height = self.getImageItem().image.shape
 

@@ -32,8 +32,7 @@ class MainWindow(QMainWindow):
         self.ui.openPushButton.clicked.connect(self._open_file)
         self.ui.cmapComboBox.currentIndexChanged.connect(self._update_cmap)
         self.ui.themeComboBox.currentIndexChanged.connect(self._set_theme)
-
-    def connect_signals(self):
+        self.ui.fontSizeSpinBox.valueChanged.connect(lambda: self.ui.carpetView.setFontSize(self.ui.fontSizeSpinBox.value()))
         self.ui.leadComboBox.currentIndexChanged.connect(self._update_lead)
         self.ui.carpetView.view.sigRangeChanged.connect(self._panSignal)
         self.ui.rSourceLeadComboBox.currentIndexChanged.connect(self._update_rpeaks)
@@ -78,7 +77,7 @@ class MainWindow(QMainWindow):
         ui.partialRadioButton.toggled.connect(lambda state: ui.durationTimeEdit.setEnabled(state))
         self.ui.exportPeaksPushButton.setEnabled(True)
 
-        # check i .rpeaks file exists
+        # check if .rpeaks file exists
         rpeaks_file = Path(self.filename).with_suffix('.rpeaks')
         if rpeaks_file.exists():
             ui.peaksRadioButton.setEnabled(True)
@@ -115,7 +114,6 @@ class MainWindow(QMainWindow):
         if ss is not None:
             status += f'\toffset: +{ss.toString("hh:mm:ss")}'
         self.statusLabel.setText(status)
-        
 
         self.lead=0
         self.rLead=0
@@ -138,7 +136,6 @@ class MainWindow(QMainWindow):
             self.ui.rSourceLeadComboBox.addItem(label)
         self.ui.rSourceLeadComboBox.blockSignals(False)
 
-        self.connect_signals()
         self.ui.signalView.setXRange(0, self.ecg.shape[1] / self.sampling_rate)
         self._update_lead(self.lead, reset_range=True)
         self.ui.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)

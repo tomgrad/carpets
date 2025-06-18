@@ -18,8 +18,8 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
     QGridLayout, QGroupBox, QLabel, QLayout,
-    QMainWindow, QPushButton, QSizePolicy, QSpinBox,
-    QStatusBar, QVBoxLayout, QWidget)
+    QMainWindow, QPushButton, QSizePolicy, QSpacerItem,
+    QSpinBox, QStatusBar, QVBoxLayout, QWidget)
 
 from carpetview import CarpetView
 from pyqtgraph import PlotWidget
@@ -95,7 +95,7 @@ class Ui_MainWindow(object):
         self.label_2 = QLabel(self.groupBox)
         self.label_2.setObjectName(u"label_2")
 
-        self.formLayout.setWidget(4, QFormLayout.ItemRole.LabelRole, self.label_2)
+        self.formLayout.setWidget(5, QFormLayout.ItemRole.LabelRole, self.label_2)
 
         self.cmapComboBox = QComboBox(self.groupBox)
         self.cmapComboBox.addItem("")
@@ -105,17 +105,39 @@ class Ui_MainWindow(object):
         self.cmapComboBox.addItem("")
         self.cmapComboBox.setObjectName(u"cmapComboBox")
 
-        self.formLayout.setWidget(4, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
+        self.formLayout.setWidget(5, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
 
+        self.label = QLabel(self.groupBox)
+        self.label.setObjectName(u"label")
 
-        self.verticalLayout.addLayout(self.formLayout)
+        self.formLayout.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label)
+
+        self.fontSizeSpinBox = QSpinBox(self.groupBox)
+        self.fontSizeSpinBox.setObjectName(u"fontSizeSpinBox")
+        self.fontSizeSpinBox.setMinimum(5)
+        self.fontSizeSpinBox.setMaximum(36)
+        self.fontSizeSpinBox.setValue(10)
+
+        self.formLayout.setWidget(6, QFormLayout.ItemRole.FieldRole, self.fontSizeSpinBox)
+
+        self.label_4 = QLabel(self.groupBox)
+        self.label_4.setObjectName(u"label_4")
+
+        self.formLayout.setWidget(7, QFormLayout.ItemRole.LabelRole, self.label_4)
 
         self.themeComboBox = QComboBox(self.groupBox)
         self.themeComboBox.addItem("")
         self.themeComboBox.addItem("")
         self.themeComboBox.setObjectName(u"themeComboBox")
 
-        self.verticalLayout.addWidget(self.themeComboBox)
+        self.formLayout.setWidget(7, QFormLayout.ItemRole.FieldRole, self.themeComboBox)
+
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.formLayout.setItem(4, QFormLayout.ItemRole.FieldRole, self.verticalSpacer)
+
+
+        self.verticalLayout.addLayout(self.formLayout)
 
         self.exportImagePushButton = QPushButton(self.groupBox)
         self.exportImagePushButton.setObjectName(u"exportImagePushButton")
@@ -169,6 +191,8 @@ class Ui_MainWindow(object):
         self.cmapComboBox.setItemText(3, QCoreApplication.translate("MainWindow", u"gray", None))
         self.cmapComboBox.setItemText(4, QCoreApplication.translate("MainWindow", u"gray_r", None))
 
+        self.label.setText(QCoreApplication.translate("MainWindow", u"Font size", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Theme", None))
         self.themeComboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"dark", None))
         self.themeComboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"light", None))
 
