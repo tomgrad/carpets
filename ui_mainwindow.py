@@ -152,6 +152,18 @@ class Ui_MainWindow(object):
 
         self.formLayout.setWidget(8, QFormLayout.ItemRole.FieldRole, self.themeComboBox)
 
+        self.lineWidthSpinBox = QSpinBox(self.groupBox)
+        self.lineWidthSpinBox.setObjectName(u"lineWidthSpinBox")
+        self.lineWidthSpinBox.setMinimum(1)
+        self.lineWidthSpinBox.setMaximum(5)
+
+        self.formLayout.setWidget(9, QFormLayout.ItemRole.FieldRole, self.lineWidthSpinBox)
+
+        self.label_6 = QLabel(self.groupBox)
+        self.label_6.setObjectName(u"label_6")
+
+        self.formLayout.setWidget(9, QFormLayout.ItemRole.LabelRole, self.label_6)
+
 
         self.verticalLayout.addLayout(self.formLayout)
 
@@ -201,6 +213,7 @@ class Ui_MainWindow(object):
         self.themeComboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"dark", None))
         self.themeComboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"light", None))
 
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Line width", None))
         self.exportImagePushButton.setText(QCoreApplication.translate("MainWindow", u"Export image", None))
         self.exportPeaksPushButton.setText(QCoreApplication.translate("MainWindow", u"Export R peaks", None))
     # retranslateUi

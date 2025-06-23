@@ -12,6 +12,8 @@ from ui_opendialog import Ui_Dialog
 
 # pg.setConfigOption('background', 'k')
 # pg.setConfigOption('foreground', 'w')
+pg.setConfigOptions(antialias=True)
+
 
 class MainWindow(QMainWindow):
 
@@ -43,6 +45,7 @@ class MainWindow(QMainWindow):
         self.ui.exportPeaksPushButton.clicked.connect(self._export_peaks)
         self.ui.fixedHeightCheckBox.stateChanged.connect(self._set_limits)
         self.ui.fixedHeightSpinBox.valueChanged.connect(lambda: self._set_limits(self.ui.fixedHeightCheckBox.checkState().value))
+        self.ui.lineWidthSpinBox.valueChanged.connect(self.updateLineWidth)
 
     def _open_file(self, filename=False):
         if filename is False:
@@ -156,7 +159,7 @@ class MainWindow(QMainWindow):
 
         t = np.arange(0, self.ecg.shape[1]) / self.sampling_rate
         self.ui.signalView.clear()
-        self.ui.signalView.plot(t, self.ecg[self.lead])
+        self.ui.signalView.plot(t, self.ecg[self.lead], pen=pg.mkPen(width=self.ui.lineWidthSpinBox.value()))
         self.ui.signalView.plot(t[rpeaks], self.ecg[self.lead, rpeaks], pen=None, symbol='o', symbolPen=None, symbolSize=10, symbolBrush=(255, 0, 0, 128))
         self.ui.signalView.setYRange(p1, p2)
         self.ui.signalView.setLimits(xMin=0, xMax=T, yMin=1.1*mn, yMax=1.1*mx)
@@ -245,6 +248,12 @@ class MainWindow(QMainWindow):
                 for i, rpeaks in enumerate(self.rpeaks):
                     f.write(f"\t".join(map(str, rpeaks)) + "\n")
             print(f"Done.")
+
+    def updateLineWidth(self, value):
+        plot = self.ui.signalView.plotItem.items[0]  
+        pen = plot.opts['pen']
+        pen.setWidth(value)
+        plot.setPen(pen)
        
 app = QApplication(sys.argv)
 window = MainWindow()
