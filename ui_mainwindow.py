@@ -123,6 +123,7 @@ class Ui_MainWindow(object):
         self.cmapComboBox.addItem("")
         self.cmapComboBox.addItem("")
         self.cmapComboBox.addItem("")
+        self.cmapComboBox.addItem("")
         self.cmapComboBox.setObjectName(u"cmapComboBox")
 
         self.formLayout.setWidget(6, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
@@ -203,10 +204,11 @@ class Ui_MainWindow(object):
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"R source", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Color map", None))
         self.cmapComboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"jet", None))
-        self.cmapComboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"seismic", None))
-        self.cmapComboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"bwr", None))
-        self.cmapComboBox.setItemText(3, QCoreApplication.translate("MainWindow", u"gray", None))
-        self.cmapComboBox.setItemText(4, QCoreApplication.translate("MainWindow", u"gray_r", None))
+        self.cmapComboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"turbo", None))
+        self.cmapComboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"seismic", None))
+        self.cmapComboBox.setItemText(3, QCoreApplication.translate("MainWindow", u"bwr", None))
+        self.cmapComboBox.setItemText(4, QCoreApplication.translate("MainWindow", u"gray", None))
+        self.cmapComboBox.setItemText(5, QCoreApplication.translate("MainWindow", u"gray_r", None))
 
         self.label.setText(QCoreApplication.translate("MainWindow", u"Font size", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Theme", None))

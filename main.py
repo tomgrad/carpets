@@ -126,9 +126,8 @@ class MainWindow(QMainWindow):
         self.left_off = self.sampling_rate
         self.right_off = 3*self.sampling_rate//2
         self.ecg = utils.clean_ecg(self.ecg, self.sampling_rate)
-        if len(self.rpeaks[0]) == 0:
-            self.rpeaks[0] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=0)
-        self.beats = len(self.rpeaks[0])
+        if len(self.rpeaks[self.rLead]) == 0:
+            self.rpeaks[self.rLead] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=self.rLead)
    
         self.ui.leadComboBox.blockSignals(True) # prevent _update_signal() from being triggered
         self.ui.leadComboBox.clear()
@@ -177,7 +176,8 @@ class MainWindow(QMainWindow):
         self.rLead = self.ui.rSourceLeadComboBox.currentIndex()
         if len(self.rpeaks[self.rLead]) == 0:
             self.rpeaks[self.rLead] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=self.rLead)
-        self._update_lead(self.lead)
+        self._update_lead(self.lead, reset_range=False)
+        self.ui.carpetView.resetLimits() # update the number of rows/segments
       
     def _set_limits(self, state):
         if state == 2:
@@ -214,8 +214,8 @@ class MainWindow(QMainWindow):
         theme = self.ui.themeComboBox.currentText()
         if theme == 'dark':
             self.ui.carpetView.getView().getViewWidget().setBackground('k')
-            self.ui.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('w'))
-            self.ui.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('w'))
+            self.ui.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('#969696'))
+            self.ui.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('#969696'))
           
         elif theme == 'light':
             self.ui.carpetView.getView().getViewWidget().setBackground('w')

@@ -134,6 +134,11 @@
            </item>
            <item>
             <property name="text">
+             <string>turbo</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
              <string>seismic</string>
             </property>
            </item>

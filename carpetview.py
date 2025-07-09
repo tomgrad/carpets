@@ -27,6 +27,17 @@ class CarpetView(pg.ImageView):
         self.view.getAxis('left').setTickFont(font)
         self.view.getAxis('bottom').setTickFont(font)
     
+    def resetLimits(self):
+        width, height = self.getImageItem().image.shape
+
+        self.view.setLimits(
+                xMin=-0.03*width, xMax=1.03*width, 
+                minXRange=1.06*width, 
+                maxXRange=1.06*width, 
+                yMin=-0.03*height, yMax=1.02*height, 
+                minYRange=5, maxYRange=1.05*height,
+        )
+    
     def resetRange(self):
         width, height = self.getImageItem().image.shape
 
@@ -41,6 +52,7 @@ class CarpetView(pg.ImageView):
             xRange=[-0.03*width, 1.03*width], 
             yRange=[-0.03*height, 1.02*height],
         )
+
 
     def RtoTime(self, R):
         return ""
