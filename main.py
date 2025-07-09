@@ -76,11 +76,12 @@ class MainWindow(QMainWindow):
         dialog = QDialog(self)
         ui.setupUi(dialog)
         ui.durationLabel.setText(f"Duration: {datetime.timedelta(seconds=duration)}  SR: {self.sampling_rate} Hz  Leads: {self.leads}")
-        ui.startTimeEdit.setTimeRange(
-            datetime.time(0), datetime.time(min(23, duration // 3600), 59, 59))
+        ui.startSpinBox.setRange(0, duration // 3600)
+        ui.durationSpinBox.setRange(0, max(1, duration // 3600))
+        ui.rLeadSpinBox.setRange(0, self.leads - 1)
 
-        ui.partialRadioButton.toggled.connect(lambda state: ui.startTimeEdit.setEnabled(state))
-        ui.partialRadioButton.toggled.connect(lambda state: ui.durationTimeEdit.setEnabled(state))
+        ui.partialRadioButton.toggled.connect(lambda state: ui.startSpinBox.setEnabled(state))
+        ui.partialRadioButton.toggled.connect(lambda state: ui.durationSpinBox.setEnabled(state))
         self.ui.exportPeaksPushButton.setEnabled(True)
 
         # check if .rpeaks file exists
@@ -99,11 +100,9 @@ class MainWindow(QMainWindow):
                 record['sig_name'] = record['sig_name'][:1]
                 self.ui.exportPeaksPushButton.setEnabled(False)
             elif ui.partialRadioButton.isChecked():
-                ss=ui.startTimeEdit.time()
-                tt=ui.durationTimeEdit.time()
-                startSamples = (ss.hour() * 3600 + ss.minute() * 60 + ss.second()) * self.sampling_rate
-                durationSamples = (tt.hour() * 3600 + tt.minute() * 60 + tt.second()) * self.sampling_rate
-                self.ecg = record['signal'][:, startSamples:startSamples + durationSamples]
+                ss=ui.startSpinBox.value() * 3600 * self.sampling_rate
+                tt=ui.durationSpinBox.value() * 3600 * self.sampling_rate
+                self.ecg = record['signal'][:, ss:ss + tt]
                 self.ui.exportPeaksPushButton.setEnabled(False)
             elif ui.peaksRadioButton.isChecked():
                 self.ecg = record['signal']
@@ -118,11 +117,11 @@ class MainWindow(QMainWindow):
         status = f'{"/".join(Path(self.filename).parts[-2:])}\t{self.sampling_rate} Hz\t{self.leads} leads'
         status += f"\tStart: {str(self.datetime).split()[-1]}"
         if ss is not None:
-            status += f'\toffset: +{ss.toString("hh:mm:ss")}'
+            status += f'\toffset: +{ui.startSpinBox.value()} hours'
         self.statusLabel.setText(status)
 
         self.lead=0
-        self.rLead=0
+        self.rLead=ui.rLeadSpinBox.value()
         self.left_off = self.sampling_rate
         self.right_off = 3*self.sampling_rate//2
         self.ecg = utils.clean_ecg(self.ecg, self.sampling_rate)
@@ -139,6 +138,7 @@ class MainWindow(QMainWindow):
         self.ui.rSourceLeadComboBox.clear()
         for label in record['sig_name']:
             self.ui.rSourceLeadComboBox.addItem(label)
+        self.ui.rSourceLeadComboBox.setCurrentIndex(self.rLead)
         self.ui.rSourceLeadComboBox.blockSignals(False)
 
         self.ui.carpetView.setEnabled(True)

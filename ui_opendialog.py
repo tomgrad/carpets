@@ -16,8 +16,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
-    QGroupBox, QLabel, QRadioButton, QSizePolicy,
-    QTimeEdit, QVBoxLayout, QWidget)
+    QFormLayout, QGroupBox, QLabel, QRadioButton,
+    QSizePolicy, QSpinBox, QVBoxLayout, QWidget)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -29,24 +29,9 @@ class Ui_Dialog(object):
         self.buttonBox.setGeometry(QRect(120, 330, 171, 32))
         self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
-        self.label = QLabel(Dialog)
-        self.label.setObjectName(u"label")
-        self.label.setGeometry(QRect(40, 250, 141, 17))
-        self.label_3 = QLabel(Dialog)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setGeometry(QRect(40, 290, 151, 17))
         self.durationLabel = QLabel(Dialog)
         self.durationLabel.setObjectName(u"durationLabel")
         self.durationLabel.setGeometry(QRect(30, 40, 301, 17))
-        self.durationTimeEdit = QTimeEdit(Dialog)
-        self.durationTimeEdit.setObjectName(u"durationTimeEdit")
-        self.durationTimeEdit.setEnabled(False)
-        self.durationTimeEdit.setGeometry(QRect(210, 240, 81, 32))
-        self.durationTimeEdit.setTime(QTime(1, 0, 0))
-        self.startTimeEdit = QTimeEdit(Dialog)
-        self.startTimeEdit.setObjectName(u"startTimeEdit")
-        self.startTimeEdit.setEnabled(False)
-        self.startTimeEdit.setGeometry(QRect(210, 280, 81, 32))
         self.groupBox = QGroupBox(Dialog)
         self.groupBox.setObjectName(u"groupBox")
         self.groupBox.setGeometry(QRect(30, 70, 271, 141))
@@ -74,6 +59,42 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addWidget(self.partialRadioButton)
 
+        self.layoutWidget = QWidget(Dialog)
+        self.layoutWidget.setObjectName(u"layoutWidget")
+        self.layoutWidget.setGeometry(QRect(40, 240, 152, 60))
+        self.formLayout = QFormLayout(self.layoutWidget)
+        self.formLayout.setObjectName(u"formLayout")
+        self.formLayout.setContentsMargins(0, 0, 0, 0)
+        self.label = QLabel(self.layoutWidget)
+        self.label.setObjectName(u"label")
+        self.label.setEnabled(True)
+
+        self.formLayout.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label)
+
+        self.durationSpinBox = QSpinBox(self.layoutWidget)
+        self.durationSpinBox.setObjectName(u"durationSpinBox")
+        self.durationSpinBox.setEnabled(False)
+        self.durationSpinBox.setMinimum(1)
+
+        self.formLayout.setWidget(0, QFormLayout.ItemRole.FieldRole, self.durationSpinBox)
+
+        self.label_3 = QLabel(self.layoutWidget)
+        self.label_3.setObjectName(u"label_3")
+
+        self.formLayout.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_3)
+
+        self.startSpinBox = QSpinBox(self.layoutWidget)
+        self.startSpinBox.setObjectName(u"startSpinBox")
+        self.startSpinBox.setEnabled(False)
+
+        self.formLayout.setWidget(1, QFormLayout.ItemRole.FieldRole, self.startSpinBox)
+
+        self.rLeadSpinBox = QSpinBox(Dialog)
+        self.rLeadSpinBox.setObjectName(u"rLeadSpinBox")
+        self.rLeadSpinBox.setGeometry(QRect(260, 270, 42, 26))
+        self.label_2 = QLabel(Dialog)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setGeometry(QRect(260, 250, 54, 17))
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
@@ -84,15 +105,14 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Import", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"Import only (HH:mm)", None))
-        self.label_3.setText(QCoreApplication.translate("Dialog", u"starting from (HH:mm)", None))
         self.durationLabel.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
-        self.durationTimeEdit.setDisplayFormat(QCoreApplication.translate("Dialog", u"HH:mm", None))
-        self.startTimeEdit.setDisplayFormat(QCoreApplication.translate("Dialog", u"HH:mm", None))
         self.groupBox.setTitle(QCoreApplication.translate("Dialog", u"Import", None))
         self.normalRadioButton.setText(QCoreApplication.translate("Dialog", u"full import", None))
         self.peaksRadioButton.setText(QCoreApplication.translate("Dialog", u"full import with R peaks", None))
         self.previewRadioButton.setText(QCoreApplication.translate("Dialog", u"quick preview (one lead, downsampled)", None))
         self.partialRadioButton.setText(QCoreApplication.translate("Dialog", u"partial import", None))
+        self.label.setText(QCoreApplication.translate("Dialog", u"Import only (HH)", None))
+        self.label_3.setText(QCoreApplication.translate("Dialog", u"starting from (HH)", None))
+        self.label_2.setText(QCoreApplication.translate("Dialog", u"R lead", None))
     # retranslateUi
 
