@@ -217,6 +217,29 @@
            </property>
           </widget>
          </item>
+         <item row="4" column="0">
+          <widget class="QPushButton" name="autolevelsPushButton">
+           <property name="toolTip">
+            <string>Cut-off top and bottom percentile</string>
+           </property>
+           <property name="text">
+            <string>Auto-levels</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QDoubleSpinBox" name="autolevelsSpinBox">
+           <property name="decimals">
+            <number>1</number>
+           </property>
+           <property name="singleStep">
+            <double>0.500000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>

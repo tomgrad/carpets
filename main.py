@@ -46,6 +46,7 @@ class MainWindow(QMainWindow):
         self.ui.fixedHeightCheckBox.stateChanged.connect(self._set_limits)
         self.ui.fixedHeightSpinBox.valueChanged.connect(lambda: self._set_limits(self.ui.fixedHeightCheckBox.checkState().value))
         self.ui.lineWidthSpinBox.valueChanged.connect(self.updateLineWidth)
+        self.ui.autolevelsPushButton.clicked.connect(self._autolevels)
 
     def _open_file(self, filename=False):
         if filename is False:
@@ -200,6 +201,11 @@ class MainWindow(QMainWindow):
         cmap = self.ui.cmapComboBox.currentText()
         cm = pg.colormap.getFromMatplotlib(cmap)
         self.ui.carpetView.setColorMap(cm)
+
+    def _autolevels(self):
+        p = self.ui.autolevelsSpinBox.value()
+        p1, p2 = np.percentile(self.ecg[self.lead], [p, 100-p])
+        self.ui.carpetView.setLevels(p1, p2)
 
     def RtoTime(self, R):
         if R < 0:

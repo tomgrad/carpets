@@ -17,10 +17,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QCheckBox, QComboBox,
-    QFormLayout, QGroupBox, QHBoxLayout, QLabel,
-    QMainWindow, QPushButton, QSizePolicy, QSpacerItem,
-    QSpinBox, QSplitter, QStatusBar, QVBoxLayout,
-    QWidget)
+    QDoubleSpinBox, QFormLayout, QGroupBox, QHBoxLayout,
+    QLabel, QMainWindow, QPushButton, QSizePolicy,
+    QSpacerItem, QSpinBox, QSplitter, QStatusBar,
+    QVBoxLayout, QWidget)
 
 from carpetview import CarpetView
 from pyqtgraph import PlotWidget
@@ -165,6 +165,19 @@ class Ui_MainWindow(object):
 
         self.formLayout.setWidget(9, QFormLayout.ItemRole.LabelRole, self.label_6)
 
+        self.autolevelsPushButton = QPushButton(self.groupBox)
+        self.autolevelsPushButton.setObjectName(u"autolevelsPushButton")
+
+        self.formLayout.setWidget(4, QFormLayout.ItemRole.LabelRole, self.autolevelsPushButton)
+
+        self.autolevelsSpinBox = QDoubleSpinBox(self.groupBox)
+        self.autolevelsSpinBox.setObjectName(u"autolevelsSpinBox")
+        self.autolevelsSpinBox.setDecimals(1)
+        self.autolevelsSpinBox.setSingleStep(0.500000000000000)
+        self.autolevelsSpinBox.setValue(1.000000000000000)
+
+        self.formLayout.setWidget(4, QFormLayout.ItemRole.FieldRole, self.autolevelsSpinBox)
+
 
         self.verticalLayout.addLayout(self.formLayout)
 
@@ -216,6 +229,10 @@ class Ui_MainWindow(object):
         self.themeComboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"light", None))
 
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"Line width", None))
+#if QT_CONFIG(tooltip)
+        self.autolevelsPushButton.setToolTip(QCoreApplication.translate("MainWindow", u"Cut-off top and bottom percentile", None))
+#endif // QT_CONFIG(tooltip)
+        self.autolevelsPushButton.setText(QCoreApplication.translate("MainWindow", u"Auto-levels", None))
         self.exportImagePushButton.setText(QCoreApplication.translate("MainWindow", u"Export image", None))
         self.exportPeaksPushButton.setText(QCoreApplication.translate("MainWindow", u"Export R peaks", None))
     # retranslateUi
