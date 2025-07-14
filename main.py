@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QLabel, QDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QLabel
 import pyqtgraph as pg
 from pyqtgraph import exporters
 import numpy as np
@@ -7,149 +7,92 @@ from pathlib import Path
 import datetime
 import utils
 
+from importer import ImportDialog
 from ui_mainwindow import Ui_MainWindow
-from ui_opendialog import Ui_Dialog
 
 # pg.setConfigOption('background', 'k')
 # pg.setConfigOption('foreground', 'w')
 pg.setConfigOptions(antialias=True)
 
-
-class MainWindow(QMainWindow):
+class MainWindow(QMainWindow, Ui_MainWindow):
 
     def __init__(self):
         super().__init__()
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
+        self.setupUi(self)
 
-        self.ui.signalView.showGrid(x=True, y=True)
-        self.ui.signalView.plotItem.getViewBox().setAutoVisible(y=True)
-        self.ui.carpetView.RtoTime = self.RtoTime
+        self.signalView.showGrid(x=True, y=True)
+        self.signalView.plotItem.getViewBox().setAutoVisible(y=True)
+        self.carpetView.RtoTime = self.RtoTime
 
-        self.ui.carpetView.setEnabled(False)
-        self.ui.signalView.setEnabled(False)
+        self.carpetView.setEnabled(False)
+        self.signalView.setEnabled(False)
 
         self.rpeaks = [np.array([])]
         self.rLead = 0
         self.sampling_rate = 1
         self.statusLabel = QLabel("Open an ECG file to start")
-        self.ui.statusbar.addPermanentWidget(self.statusLabel)
-        self.ui.openPushButton.clicked.connect(self._open_file)
-        self.ui.cmapComboBox.currentIndexChanged.connect(self._update_cmap)
-        self.ui.themeComboBox.currentIndexChanged.connect(self._set_theme)
-        self.ui.fontSizeSpinBox.valueChanged.connect(lambda: self.ui.carpetView.setFontSize(self.ui.fontSizeSpinBox.value()))
-        self.ui.leadComboBox.currentIndexChanged.connect(self._update_lead)
-        self.ui.carpetView.view.sigRangeChanged.connect(self._panSignal)
-        self.ui.rSourceLeadComboBox.currentIndexChanged.connect(self._update_rpeaks)
-        self.ui.exportImagePushButton.clicked.connect(self._export_image)
-        self.ui.exportPeaksPushButton.clicked.connect(self._export_peaks)
-        self.ui.fixedHeightCheckBox.stateChanged.connect(self._set_limits)
-        self.ui.fixedHeightSpinBox.valueChanged.connect(lambda: self._set_limits(self.ui.fixedHeightCheckBox.checkState().value))
-        self.ui.lineWidthSpinBox.valueChanged.connect(self.updateLineWidth)
-        self.ui.autolevelsPushButton.clicked.connect(self._autolevels)
+        self.statusbar.addPermanentWidget(self.statusLabel)
+        self.openPushButton.clicked.connect(self._open_file)
+        self.cmapComboBox.currentIndexChanged.connect(self._update_cmap)
+        self.themeComboBox.currentIndexChanged.connect(self._set_theme)
+        self.fontSizeSpinBox.valueChanged.connect(lambda: self.carpetView.setFontSize(self.fontSizeSpinBox.value()))
+        self.leadComboBox.currentIndexChanged.connect(self._update_lead)
+        self.carpetView.view.sigRangeChanged.connect(self._panSignal)
+        self.rSourceLeadComboBox.currentIndexChanged.connect(self._update_rpeaks)
+        self.exportImagePushButton.clicked.connect(self._export_image)
+        self.exportPeaksPushButton.clicked.connect(self._export_peaks)
+        self.fixedHeightCheckBox.stateChanged.connect(self._set_limits)
+        self.fixedHeightSpinBox.valueChanged.connect(lambda: self._set_limits(self.fixedHeightCheckBox.checkState().value))
+        self.lineWidthSpinBox.valueChanged.connect(self.updateLineWidth)
+        self.autolevelsPushButton.clicked.connect(self._autolevels)
 
     def _open_file(self, filename=False):
-        if filename is False:
-            filename, _ = QFileDialog.getOpenFileName(self, "Open ECG", "",
-                                                       "ECG files (*.ecg *.hea *.dat *.ISHNE);;Ishne ECG (*.ecg *.ISHNE);;WFDB (MIT) ECG (*.hea);;AMEDTEC ECGPro (*.dat)"
-                                                       )
+        importer = ImportDialog()
+        record = importer.run()
 
-        file_ext = filename.split('.')[-1]
-        if file_ext == 'ecg' or file_ext == 'ISHNE':
-            record = utils.load_ishne(filename)
-        elif file_ext == 'hea':
-            record = utils.load_wfdb(filename)
-        elif file_ext == 'dat':
-            record = utils.load_amedtec_ecgpro(filename)
-        elif file_ext == 'csv':
-            record = utils.load_csv(filename)
-        else:
+        if not record:
             return
 
-        self.filename = filename
-
+        self.ecg = record['ecg']
+        self.rpeaks = record['rpeaks']
+        self.filename = record['filename']
         self.sampling_rate = record['sampling_rate']
         self.datetime = record['datetime']
-        self.leads = record['n_sig']
-        duration = record['sig_len'] // record['sampling_rate']
+        self.leads = record['leads']
 
-        ui = Ui_Dialog()
-        dialog = QDialog(self)
-        ui.setupUi(dialog)
-        ui.durationLabel.setText(f"Duration: {datetime.timedelta(seconds=duration)}  SR: {self.sampling_rate} Hz  Leads: {self.leads}")
-        ui.startSpinBox.setRange(0, duration // 3600)
-        ui.durationSpinBox.setRange(0, max(1, duration // 3600))
-        ui.rLeadSpinBox.setRange(0, self.leads - 1)
-
-        ui.partialRadioButton.toggled.connect(lambda state: ui.startSpinBox.setEnabled(state))
-        ui.partialRadioButton.toggled.connect(lambda state: ui.durationSpinBox.setEnabled(state))
-        self.ui.exportPeaksPushButton.setEnabled(True)
-
-        # check if .rpeaks file exists
-        rpeaks_file = Path(self.filename).with_suffix('.rpeaks')
-        if rpeaks_file.exists():
-            ui.peaksRadioButton.setEnabled(True)
-
-        ss = None # start time
-
-        self.rpeaks = [[]]*self.leads
-
-        if dialog.exec() == QDialog.Accepted:
-            if ui.previewRadioButton.isChecked():
-                self.sampling_rate //= 2
-                self.ecg = record['signal'][:1, ::2]
-                record['sig_name'] = record['sig_name'][:1]
-                self.ui.exportPeaksPushButton.setEnabled(False)
-            elif ui.partialRadioButton.isChecked():
-                ss=ui.startSpinBox.value() * 3600 * self.sampling_rate
-                tt=ui.durationSpinBox.value() * 3600 * self.sampling_rate
-                self.ecg = record['signal'][:, ss:ss + tt]
-                self.ui.exportPeaksPushButton.setEnabled(False)
-            elif ui.peaksRadioButton.isChecked():
-                self.ecg = record['signal']
-                with open(rpeaks_file, 'r') as f:
-                    rpeaks = f.readlines()
-                self.rpeaks = [np.array(list(map(int, line.strip().split()))) for line in rpeaks]
-            else:
-                self.ecg = record['signal']
-        else:
-            return
-      
         status = f'{"/".join(Path(self.filename).parts[-2:])}\t{self.sampling_rate} Hz\t{self.leads} leads'
         status += f"\tStart: {str(self.datetime).split()[-1]}"
-        if ss is not None:
-            status += f'\toffset: +{ui.startSpinBox.value()} hours'
+        if record['start_time']:
+            status += f'\toffset: +{record['start_time']} hours'
         self.statusLabel.setText(status)
 
         self.lead=0
-        self.rLead=ui.rLeadSpinBox.value()
+        self.rLead=record['rlead']
         self.left_off = self.sampling_rate
         self.right_off = 3*self.sampling_rate//2
-        self.ecg = utils.clean_ecg(self.ecg, self.sampling_rate)
-        if len(self.rpeaks[self.rLead]) == 0:
+
+        if len(self.rpeaks[self.rLead]) == 0:   # if no R peaks are loaded
             self.rpeaks[self.rLead] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=self.rLead)
    
-        self.ui.leadComboBox.blockSignals(True) # prevent _update_signal() from being triggered
-        self.ui.leadComboBox.clear()
+        self.leadComboBox.blockSignals(True) # prevent _update_signal() from being triggered
+        self.rSourceLeadComboBox.blockSignals(True)
+        self.leadComboBox.clear()
+        self.rSourceLeadComboBox.clear()
         for label in record['sig_name']:
-            self.ui.leadComboBox.addItem(label)
-        self.ui.leadComboBox.blockSignals(False)
+            self.leadComboBox.addItem(label)
+            self.rSourceLeadComboBox.addItem(label)
+        self.leadComboBox.blockSignals(False)
+        self.rSourceLeadComboBox.setCurrentIndex(self.rLead)
+        self.rSourceLeadComboBox.blockSignals(False)
 
-        self.ui.rSourceLeadComboBox.blockSignals(True) # prevent _update_signal() from being triggered
-        self.ui.rSourceLeadComboBox.clear()
-        for label in record['sig_name']:
-            self.ui.rSourceLeadComboBox.addItem(label)
-        self.ui.rSourceLeadComboBox.setCurrentIndex(self.rLead)
-        self.ui.rSourceLeadComboBox.blockSignals(False)
-
-        self.ui.carpetView.setEnabled(True)
-        self.ui.signalView.setEnabled(True)
-        self.ui.fixedHeightCheckBox.setChecked(False)
-        self.ui.signalView.setXRange(0, self.ecg.shape[1] / self.sampling_rate)
+        self.carpetView.setEnabled(True)
+        self.signalView.setEnabled(True)
+        self.fixedHeightCheckBox.setChecked(False)
+        self.signalView.setXRange(0, self.ecg.shape[1] / self.sampling_rate)
         self._update_lead(self.lead, reset_range=True)
-        self.ui.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)
+        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)
+        self.exportPeaksPushButton.setEnabled(record['allow_export_peaks'])
     
-
     def _update_lead(self, lead, reset_range=False):
         self.lead = lead
         rpeaks = self.rpeaks[self.rLead]
@@ -158,54 +101,54 @@ class MainWindow(QMainWindow):
         p1, p2 = np.percentile(self.ecg[self.lead], [0.5, 99.5])
 
         t = np.arange(0, self.ecg.shape[1]) / self.sampling_rate
-        self.ui.signalView.clear()
-        self.ui.signalView.plot(t, self.ecg[self.lead], pen=pg.mkPen(width=self.ui.lineWidthSpinBox.value()))
-        self.ui.signalView.plot(t[rpeaks], self.ecg[self.lead, rpeaks], pen=None, symbol='o', symbolPen=None, symbolSize=10, symbolBrush=(255, 0, 0, 128))
-        self.ui.signalView.setYRange(p1, p2)
-        self.ui.signalView.setLimits(xMin=0, xMax=T, yMin=1.1*mn, yMax=1.1*mx)
+        self.signalView.clear()
+        self.signalView.plot(t, self.ecg[self.lead], pen=pg.mkPen(width=self.lineWidthSpinBox.value()))
+        self.signalView.plot(t[rpeaks], self.ecg[self.lead, rpeaks], pen=None, symbol='o', symbolPen=None, symbolSize=10, symbolBrush=(255, 0, 0, 128))
+        self.signalView.setYRange(p1, p2)
+        self.signalView.setLimits(xMin=0, xMax=T, yMin=1.1*mn, yMax=1.1*mx)
 
         image, _ = utils.make_carpet(self.ecg[self.lead], rpeaks, first_r=0, beats=len(rpeaks), left_off=self.left_off, right_off=self.right_off)
-        self.ui.carpetView.setImage(image.T, autoRange=False)
+        self.carpetView.setImage(image.T, autoRange=False)
         if reset_range==True:
-            self.ui.carpetView.resetRange()
+            self.carpetView.resetRange()
 
-        self.ui.carpetView.setLevels(p1, p2)
-        hist = self.ui.carpetView.getHistogramWidget()
+        self.carpetView.setLevels(p1, p2)
+        hist = self.carpetView.getHistogramWidget()
         hist.setHistogramRange(p1, p2)
 
     def _update_rpeaks(self):
-        self.rLead = self.ui.rSourceLeadComboBox.currentIndex()
+        self.rLead = self.rSourceLeadComboBox.currentIndex()
         if len(self.rpeaks[self.rLead]) == 0:
             self.rpeaks[self.rLead] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=self.rLead)
         self._update_lead(self.lead, reset_range=False)
-        self.ui.carpetView.resetLimits() # update the number of rows/segments
+        self.carpetView.resetLimits() # update the number of rows/segments
       
     def _set_limits(self, state):
         if state == 2:
-            height = self.ui.fixedHeightSpinBox.value()
-            self.ui.carpetView.view.setLimits(minYRange=height, maxYRange=height)
+            height = self.fixedHeightSpinBox.value()
+            self.carpetView.view.setLimits(minYRange=height, maxYRange=height)
         else:
-            _, height = self.ui.carpetView.getImageItem().image.shape
-            self.ui.carpetView.view.setLimits(minYRange=5, maxYRange=1.05*height)
+            _, height = self.carpetView.getImageItem().image.shape
+            self.carpetView.view.setLimits(minYRange=5, maxYRange=1.05*height)
 
     def _panSignal(self):
         rpeaks = self.rpeaks[self.rLead]
-        r_range = self.ui.carpetView.view.viewRange()[1]
+        r_range = self.carpetView.view.viewRange()[1]
         r1, r2 = int(r_range[0]), int(r_range[1])
         r1 = max(0, r1)
         r2 = min(rpeaks.shape[0]-1, r2)
-        self.ui.signalView.setXRange(
+        self.signalView.setXRange(
             rpeaks[r1]/self.sampling_rate, rpeaks[r2]/self.sampling_rate)
 
     def _update_cmap(self):
-        cmap = self.ui.cmapComboBox.currentText()
+        cmap = self.cmapComboBox.currentText()
         cm = pg.colormap.getFromMatplotlib(cmap)
-        self.ui.carpetView.setColorMap(cm)
+        self.carpetView.setColorMap(cm)
 
     def _autolevels(self):
-        p = self.ui.autolevelsSpinBox.value()
+        p = self.autolevelsSpinBox.value()
         p1, p2 = np.percentile(self.ecg[self.lead], [p, 100-p])
-        self.ui.carpetView.setLevels(p1, p2)
+        self.carpetView.setLevels(p1, p2)
 
     def RtoTime(self, R):
         if R < 0:
@@ -217,30 +160,24 @@ class MainWindow(QMainWindow):
         return f"{datetime.timedelta(seconds=int(totalSeconds))}\n{R}RR"
     
     def _set_theme(self):
-        theme = self.ui.themeComboBox.currentText()
+        theme = self.themeComboBox.currentText()
         if theme == 'dark':
-            self.ui.carpetView.getView().getViewWidget().setBackground('k')
-            self.ui.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('#969696'))
-            self.ui.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('#969696'))
-          
+            self.carpetView.getView().getViewWidget().setBackground('k')
+            self.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('#969696'))
+            self.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('#969696'))
         elif theme == 'light':
-            self.ui.carpetView.getView().getViewWidget().setBackground('w')
-            self.ui.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('k'))
-            self.ui.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('k'))
-
-        else:
-            print(f"Unknown theme: {theme}")
-            return
+            self.carpetView.getView().getViewWidget().setBackground('w')
+            self.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('k'))
+            self.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('k'))
 
     def _export_image(self):
         name = Path(self.filename).stem + '.png'
         filename, _ = QFileDialog.getSaveFileName(self, "Save Image", name, "PNG files (*.png);;JPEG files (*.jpg);;All files (*)")
         if filename:
-            exporter = exporters.ImageExporter(self.ui.carpetView.view)
+            exporter = exporters.ImageExporter(self.carpetView.view)
             exporter.parameters()['height'] = 1080
             exporter.export(filename)
             print(f"Image saved to {filename}")
-
 
     def _export_peaks(self):
         name = str(Path(self.filename).with_suffix('.rpeaks'))
@@ -256,7 +193,7 @@ class MainWindow(QMainWindow):
             print(f"Done.")
 
     def updateLineWidth(self, value):
-        plot = self.ui.signalView.plotItem.items[0]  
+        plot = self.signalView.plotItem.items[0]  
         pen = plot.opts['pen']
         pen.setWidth(value)
         plot.setPen(pen)

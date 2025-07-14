@@ -108,7 +108,7 @@ class Ui_Dialog(object):
         self.durationLabel.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
         self.groupBox.setTitle(QCoreApplication.translate("Dialog", u"Import", None))
         self.normalRadioButton.setText(QCoreApplication.translate("Dialog", u"full import", None))
-        self.peaksRadioButton.setText(QCoreApplication.translate("Dialog", u"full import with R peaks", None))
+        self.peaksRadioButton.setText(QCoreApplication.translate("Dialog", u"full import with R peaks (experimental)", None))
         self.previewRadioButton.setText(QCoreApplication.translate("Dialog", u"quick preview (one lead, downsampled)", None))
         self.partialRadioButton.setText(QCoreApplication.translate("Dialog", u"partial import", None))
         self.label.setText(QCoreApplication.translate("Dialog", u"Import only (HH)", None))

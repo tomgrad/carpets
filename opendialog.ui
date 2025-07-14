@@ -71,7 +71,7 @@
        <bool>false</bool>
       </property>
       <property name="text">
-       <string>full import with R peaks</string>
+       <string>full import with R peaks (experimental)</string>
       </property>
      </widget>
     </item>

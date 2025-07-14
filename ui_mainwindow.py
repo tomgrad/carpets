@@ -173,6 +173,7 @@ class Ui_MainWindow(object):
         self.autolevelsSpinBox = QDoubleSpinBox(self.groupBox)
         self.autolevelsSpinBox.setObjectName(u"autolevelsSpinBox")
         self.autolevelsSpinBox.setDecimals(1)
+        self.autolevelsSpinBox.setMaximum(50.000000000000000)
         self.autolevelsSpinBox.setSingleStep(0.500000000000000)
         self.autolevelsSpinBox.setValue(1.000000000000000)
 
