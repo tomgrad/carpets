@@ -29,6 +29,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.rpeaks = [np.array([])]
         self.rLead = 0
+        self.xUnit = 'ms'
         self.sampling_rate = 1
         self.statusLabel = QLabel("Open an ECG file to start")
         self.statusbar.addPermanentWidget(self.statusLabel)
@@ -45,6 +46,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fixedHeightSpinBox.valueChanged.connect(lambda: self._set_limits(self.fixedHeightCheckBox.checkState().value))
         self.lineWidthSpinBox.valueChanged.connect(self.updateLineWidth)
         self.autolevelsPushButton.clicked.connect(self._autolevels)
+        self.msRadioButton.toggled.connect(self._set_ms_unit)
+        self.bpmRadioButton.toggled.connect(self._set_bpm_unit)
 
     def _open_file(self, filename=False):
         importer = ImportDialog()
@@ -90,7 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fixedHeightCheckBox.setChecked(False)
         self.signalView.setXRange(0, self.ecg.shape[1] / self.sampling_rate)
         self._update_lead(self.lead, reset_range=True)
-        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)
+        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, unit=self.xUnit)
         self.exportPeaksPushButton.setEnabled(record['allow_export_peaks'])
     
     def _update_lead(self, lead, reset_range=False):
@@ -158,6 +161,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         R = int(R)
         totalSeconds = self.rpeaks[self.rLead][R]/self.sampling_rate
         return f"{datetime.timedelta(seconds=int(totalSeconds))}\n{R}RR"
+    
+
+    def _set_ms_unit(self):
+        self.xUnit = 'ms'
+        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, unit='ms')
+
+    def _set_bpm_unit(self):
+        self.xUnit = 'bpm'
+        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, unit='bpm')
     
     def _set_theme(self):
         theme = self.themeComboBox.currentText()

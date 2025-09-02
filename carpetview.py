@@ -12,15 +12,24 @@ class CarpetView(pg.ImageView):
         self.view.setAutoVisible(y=False)
         self.view.setAspectLocked(lock=False)
         self.view.getAxis('left').setTickDensity(1.25)
+        self.view.getAxis('left').setStyle(tickLength=5)
+        self.view.getAxis('bottom').setStyle(tickLength=5)
 
         ax = self.getView().getAxis('left')
         ax.tickStrings = self.tickStrings
 
-    def setXticks(self, left_off, right_off, sampling_rate, num=6):
-        ticks = np.linspace(0, left_off+right_off, num)
-        self.view.getAxis('bottom').setTicks([
-           [(t.item(), str(int((t-sampling_rate)*1000/sampling_rate))+' ms') for t in ticks]
-           ])
+    def setXticks(self, left_off, right_off, sampling_rate, num=6, unit='ms'):
+        
+        if unit=='ms':
+            ticks = np.linspace(0, left_off+right_off, num)
+            self.view.getAxis('bottom').setTicks([
+            [(t.item(), str(int((t-sampling_rate)*1000/sampling_rate))+' ms') for t in ticks]
+            ])
+        elif unit=='bpm':
+            ticks = np.linspace(left_off+sampling_rate//4, left_off+right_off, num)
+            self.view.getAxis('bottom').setTicks([
+            [(t.item(), str(int(60*sampling_rate/(t-sampling_rate)))+' bpm') for t in ticks if t>sampling_rate]
+            ])
         
     def setFontSize(self, size):
         font = pg.QtGui.QFont('sans', size)

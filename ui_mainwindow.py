@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'mainwindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.0
+## Created by: Qt User Interface Compiler version 6.9.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -16,11 +16,11 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QCheckBox, QComboBox,
-    QDoubleSpinBox, QFormLayout, QGroupBox, QHBoxLayout,
-    QLabel, QMainWindow, QPushButton, QSizePolicy,
-    QSpacerItem, QSpinBox, QSplitter, QStatusBar,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QButtonGroup, QCheckBox,
+    QComboBox, QDoubleSpinBox, QFormLayout, QGroupBox,
+    QHBoxLayout, QLabel, QMainWindow, QPushButton,
+    QRadioButton, QSizePolicy, QSpacerItem, QSpinBox,
+    QSplitter, QStatusBar, QVBoxLayout, QWidget)
 
 from carpetview import CarpetView
 from pyqtgraph import PlotWidget
@@ -110,12 +110,12 @@ class Ui_MainWindow(object):
 
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.formLayout.setItem(5, QFormLayout.ItemRole.FieldRole, self.verticalSpacer)
+        self.formLayout.setItem(8, QFormLayout.ItemRole.FieldRole, self.verticalSpacer)
 
         self.label_2 = QLabel(self.groupBox)
         self.label_2.setObjectName(u"label_2")
 
-        self.formLayout.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label_2)
+        self.formLayout.setWidget(9, QFormLayout.ItemRole.LabelRole, self.label_2)
 
         self.cmapComboBox = QComboBox(self.groupBox)
         self.cmapComboBox.addItem("")
@@ -126,12 +126,12 @@ class Ui_MainWindow(object):
         self.cmapComboBox.addItem("")
         self.cmapComboBox.setObjectName(u"cmapComboBox")
 
-        self.formLayout.setWidget(6, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
+        self.formLayout.setWidget(9, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
 
         self.label = QLabel(self.groupBox)
         self.label.setObjectName(u"label")
 
-        self.formLayout.setWidget(7, QFormLayout.ItemRole.LabelRole, self.label)
+        self.formLayout.setWidget(10, QFormLayout.ItemRole.LabelRole, self.label)
 
         self.fontSizeSpinBox = QSpinBox(self.groupBox)
         self.fontSizeSpinBox.setObjectName(u"fontSizeSpinBox")
@@ -139,31 +139,31 @@ class Ui_MainWindow(object):
         self.fontSizeSpinBox.setMaximum(36)
         self.fontSizeSpinBox.setValue(10)
 
-        self.formLayout.setWidget(7, QFormLayout.ItemRole.FieldRole, self.fontSizeSpinBox)
+        self.formLayout.setWidget(10, QFormLayout.ItemRole.FieldRole, self.fontSizeSpinBox)
 
         self.label_4 = QLabel(self.groupBox)
         self.label_4.setObjectName(u"label_4")
 
-        self.formLayout.setWidget(8, QFormLayout.ItemRole.LabelRole, self.label_4)
+        self.formLayout.setWidget(11, QFormLayout.ItemRole.LabelRole, self.label_4)
 
         self.themeComboBox = QComboBox(self.groupBox)
         self.themeComboBox.addItem("")
         self.themeComboBox.addItem("")
         self.themeComboBox.setObjectName(u"themeComboBox")
 
-        self.formLayout.setWidget(8, QFormLayout.ItemRole.FieldRole, self.themeComboBox)
+        self.formLayout.setWidget(11, QFormLayout.ItemRole.FieldRole, self.themeComboBox)
 
         self.lineWidthSpinBox = QSpinBox(self.groupBox)
         self.lineWidthSpinBox.setObjectName(u"lineWidthSpinBox")
         self.lineWidthSpinBox.setMinimum(1)
         self.lineWidthSpinBox.setMaximum(5)
 
-        self.formLayout.setWidget(9, QFormLayout.ItemRole.FieldRole, self.lineWidthSpinBox)
+        self.formLayout.setWidget(12, QFormLayout.ItemRole.FieldRole, self.lineWidthSpinBox)
 
         self.label_6 = QLabel(self.groupBox)
         self.label_6.setObjectName(u"label_6")
 
-        self.formLayout.setWidget(9, QFormLayout.ItemRole.LabelRole, self.label_6)
+        self.formLayout.setWidget(12, QFormLayout.ItemRole.LabelRole, self.label_6)
 
         self.autolevelsPushButton = QPushButton(self.groupBox)
         self.autolevelsPushButton.setObjectName(u"autolevelsPushButton")
@@ -178,6 +178,31 @@ class Ui_MainWindow(object):
         self.autolevelsSpinBox.setValue(1.000000000000000)
 
         self.formLayout.setWidget(4, QFormLayout.ItemRole.FieldRole, self.autolevelsSpinBox)
+
+        self.bpmRadioButton = QRadioButton(self.groupBox)
+        self.buttonGroup = QButtonGroup(MainWindow)
+        self.buttonGroup.setObjectName(u"buttonGroup")
+        self.buttonGroup.addButton(self.bpmRadioButton)
+        self.bpmRadioButton.setObjectName(u"bpmRadioButton")
+
+        self.formLayout.setWidget(7, QFormLayout.ItemRole.FieldRole, self.bpmRadioButton)
+
+        self.msRadioButton = QRadioButton(self.groupBox)
+        self.buttonGroup.addButton(self.msRadioButton)
+        self.msRadioButton.setObjectName(u"msRadioButton")
+        self.msRadioButton.setChecked(True)
+
+        self.formLayout.setWidget(6, QFormLayout.ItemRole.FieldRole, self.msRadioButton)
+
+        self.label_7 = QLabel(self.groupBox)
+        self.label_7.setObjectName(u"label_7")
+        self.label_7.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.formLayout.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label_7)
+
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.formLayout.setItem(5, QFormLayout.ItemRole.FieldRole, self.verticalSpacer_2)
 
 
         self.verticalLayout.addLayout(self.formLayout)
@@ -234,6 +259,9 @@ class Ui_MainWindow(object):
         self.autolevelsPushButton.setToolTip(QCoreApplication.translate("MainWindow", u"Cut-off top and bottom percentile", None))
 #endif // QT_CONFIG(tooltip)
         self.autolevelsPushButton.setText(QCoreApplication.translate("MainWindow", u"Auto-levels", None))
+        self.bpmRadioButton.setText(QCoreApplication.translate("MainWindow", u"bpm", None))
+        self.msRadioButton.setText(QCoreApplication.translate("MainWindow", u"ms", None))
+        self.label_7.setText(QCoreApplication.translate("MainWindow", u"x scale units", None))
         self.exportImagePushButton.setText(QCoreApplication.translate("MainWindow", u"Export image", None))
         self.exportPeaksPushButton.setText(QCoreApplication.translate("MainWindow", u"Export R peaks", None))
     # retranslateUi

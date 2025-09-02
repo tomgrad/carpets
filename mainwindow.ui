@@ -105,7 +105,7 @@
          <item row="3" column="1">
           <widget class="QComboBox" name="rSourceLeadComboBox"/>
          </item>
-         <item row="5" column="1">
+         <item row="8" column="1">
           <spacer name="verticalSpacer">
            <property name="orientation">
             <enum>Qt::Orientation::Vertical</enum>
@@ -118,14 +118,14 @@
            </property>
           </spacer>
          </item>
-         <item row="6" column="0">
+         <item row="9" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
             <string>Color map</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
+         <item row="9" column="1">
           <widget class="QComboBox" name="cmapComboBox">
            <item>
             <property name="text">
@@ -159,14 +159,14 @@
            </item>
           </widget>
          </item>
-         <item row="7" column="0">
+         <item row="10" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
             <string>Font size</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
+         <item row="10" column="1">
           <widget class="QSpinBox" name="fontSizeSpinBox">
            <property name="minimum">
             <number>5</number>
@@ -179,14 +179,14 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="0">
+         <item row="11" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
             <string>Theme</string>
            </property>
           </widget>
          </item>
-         <item row="8" column="1">
+         <item row="11" column="1">
           <widget class="QComboBox" name="themeComboBox">
            <item>
             <property name="text">
@@ -200,7 +200,7 @@
            </item>
           </widget>
          </item>
-         <item row="9" column="1">
+         <item row="12" column="1">
           <widget class="QSpinBox" name="lineWidthSpinBox">
            <property name="minimum">
             <number>1</number>
@@ -210,7 +210,7 @@
            </property>
           </widget>
          </item>
-         <item row="9" column="0">
+         <item row="12" column="0">
           <widget class="QLabel" name="label_6">
            <property name="text">
             <string>Line width</string>
@@ -242,6 +242,52 @@
             <double>1.000000000000000</double>
            </property>
           </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QRadioButton" name="bpmRadioButton">
+           <property name="text">
+            <string>bpm</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">buttonGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QRadioButton" name="msRadioButton">
+           <property name="text">
+            <string>ms</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">buttonGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>x scale units</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -290,4 +336,7 @@
  </customwidgets>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>

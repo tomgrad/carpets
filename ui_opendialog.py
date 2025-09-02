@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'opendialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.0
+## Created by: Qt User Interface Compiler version 6.9.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,10 +23,10 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(333, 373)
+        Dialog.resize(412, 381)
         self.buttonBox = QDialogButtonBox(Dialog)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setGeometry(QRect(120, 330, 171, 32))
+        self.buttonBox.setGeometry(QRect(230, 340, 171, 32))
         self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
         self.durationLabel = QLabel(Dialog)
@@ -34,7 +34,7 @@ class Ui_Dialog(object):
         self.durationLabel.setGeometry(QRect(30, 40, 301, 17))
         self.groupBox = QGroupBox(Dialog)
         self.groupBox.setObjectName(u"groupBox")
-        self.groupBox.setGeometry(QRect(30, 70, 271, 141))
+        self.groupBox.setGeometry(QRect(30, 70, 331, 141))
         self.verticalLayout = QVBoxLayout(self.groupBox)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.normalRadioButton = QRadioButton(self.groupBox)
@@ -59,42 +59,42 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addWidget(self.partialRadioButton)
 
-        self.layoutWidget = QWidget(Dialog)
-        self.layoutWidget.setObjectName(u"layoutWidget")
-        self.layoutWidget.setGeometry(QRect(40, 240, 152, 60))
-        self.formLayout = QFormLayout(self.layoutWidget)
-        self.formLayout.setObjectName(u"formLayout")
-        self.formLayout.setContentsMargins(0, 0, 0, 0)
-        self.label = QLabel(self.layoutWidget)
+        self.rLeadSpinBox = QSpinBox(Dialog)
+        self.rLeadSpinBox.setObjectName(u"rLeadSpinBox")
+        self.rLeadSpinBox.setGeometry(QRect(310, 280, 42, 26))
+        self.label_2 = QLabel(Dialog)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setGeometry(QRect(310, 260, 54, 17))
+        self.formLayoutWidget_2 = QWidget(Dialog)
+        self.formLayoutWidget_2.setObjectName(u"formLayoutWidget_2")
+        self.formLayoutWidget_2.setGeometry(QRect(30, 240, 241, 80))
+        self.formLayout_3 = QFormLayout(self.formLayoutWidget_2)
+        self.formLayout_3.setObjectName(u"formLayout_3")
+        self.formLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.label = QLabel(self.formLayoutWidget_2)
         self.label.setObjectName(u"label")
         self.label.setEnabled(True)
 
-        self.formLayout.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label)
+        self.formLayout_3.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label)
 
-        self.durationSpinBox = QSpinBox(self.layoutWidget)
+        self.durationSpinBox = QSpinBox(self.formLayoutWidget_2)
         self.durationSpinBox.setObjectName(u"durationSpinBox")
         self.durationSpinBox.setEnabled(False)
         self.durationSpinBox.setMinimum(1)
 
-        self.formLayout.setWidget(0, QFormLayout.ItemRole.FieldRole, self.durationSpinBox)
+        self.formLayout_3.setWidget(0, QFormLayout.ItemRole.FieldRole, self.durationSpinBox)
 
-        self.label_3 = QLabel(self.layoutWidget)
+        self.label_3 = QLabel(self.formLayoutWidget_2)
         self.label_3.setObjectName(u"label_3")
 
-        self.formLayout.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_3)
+        self.formLayout_3.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_3)
 
-        self.startSpinBox = QSpinBox(self.layoutWidget)
+        self.startSpinBox = QSpinBox(self.formLayoutWidget_2)
         self.startSpinBox.setObjectName(u"startSpinBox")
         self.startSpinBox.setEnabled(False)
 
-        self.formLayout.setWidget(1, QFormLayout.ItemRole.FieldRole, self.startSpinBox)
+        self.formLayout_3.setWidget(1, QFormLayout.ItemRole.FieldRole, self.startSpinBox)
 
-        self.rLeadSpinBox = QSpinBox(Dialog)
-        self.rLeadSpinBox.setObjectName(u"rLeadSpinBox")
-        self.rLeadSpinBox.setGeometry(QRect(260, 270, 42, 26))
-        self.label_2 = QLabel(Dialog)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setGeometry(QRect(260, 250, 54, 17))
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
@@ -111,8 +111,8 @@ class Ui_Dialog(object):
         self.peaksRadioButton.setText(QCoreApplication.translate("Dialog", u"full import with R peaks (experimental)", None))
         self.previewRadioButton.setText(QCoreApplication.translate("Dialog", u"quick preview (one lead, downsampled)", None))
         self.partialRadioButton.setText(QCoreApplication.translate("Dialog", u"partial import", None))
+        self.label_2.setText(QCoreApplication.translate("Dialog", u"R lead", None))
         self.label.setText(QCoreApplication.translate("Dialog", u"Import only (HH)", None))
         self.label_3.setText(QCoreApplication.translate("Dialog", u"starting from (HH)", None))
-        self.label_2.setText(QCoreApplication.translate("Dialog", u"R lead", None))
     # retranslateUi
 
