@@ -19,7 +19,7 @@ class CarpetView(pg.ImageView):
     def setXticks(self, left_off, right_off, sampling_rate, num=6):
         ticks = np.linspace(0, left_off+right_off, num)
         self.view.getAxis('bottom').setTicks([
-           [(t.item(), str(int((t-sampling_rate)*1000/sampling_rate))) for t in ticks]
+           [(t.item(), str(int((t-sampling_rate)*1000/sampling_rate))+' ms') for t in ticks]
            ])
         
     def setFontSize(self, size):
@@ -31,9 +31,9 @@ class CarpetView(pg.ImageView):
         width, height = self.getImageItem().image.shape
 
         self.view.setLimits(
-                xMin=-0.03*width, xMax=1.03*width, 
-                minXRange=1.06*width, 
-                maxXRange=1.06*width, 
+                xMin=-0.1*width, xMax=1.1*width, 
+                minXRange=1.2*width, 
+                maxXRange=1.2*width, 
                 yMin=-0.03*height, yMax=1.02*height, 
                 minYRange=5, maxYRange=1.05*height,
         )
@@ -42,14 +42,14 @@ class CarpetView(pg.ImageView):
         width, height = self.getImageItem().image.shape
 
         self.view.setLimits(
-                xMin=-0.03*width, xMax=1.03*width, 
-                minXRange=1.06*width, 
-                maxXRange=1.06*width, 
+                xMin=-0.1*width, xMax=1.1*width, 
+                minXRange=1.2*width, 
+                maxXRange=1.2*width, 
                 yMin=-0.03*height, yMax=1.02*height, 
                 minYRange=5, maxYRange=1.05*height,
         )
         self.view.setRange(
-            xRange=[-0.03*width, 1.03*width], 
+            xRange=[-0.1*width, 1.1*width], 
             yRange=[-0.03*height, 1.02*height],
         )
 
