@@ -183,7 +183,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('k'))
 
     def _export_image(self):
-        name = Path(self.filename).stem + '.png'
+        name = Path(self.filename).stem + f'_{self.lead}_{self.rLead}.png'
         filename, _ = QFileDialog.getSaveFileName(self, "Save Image", name, "PNG files (*.png);;JPEG files (*.jpg);;All files (*)")
         if filename:
             exporter = exporters.ImageExporter(self.carpetView.view)
