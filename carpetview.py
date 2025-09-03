@@ -26,9 +26,10 @@ class CarpetView(pg.ImageView):
             [(t.item(), str(int((t-sampling_rate)*1000/sampling_rate))+' ms') for t in ticks]
             ])
         elif unit=='bpm':
-            ticks = np.linspace(left_off+sampling_rate//4, left_off+right_off, num)
+            ticks = np.linspace(left_off, left_off+right_off, num+1)
+
             self.view.getAxis('bottom').setTicks([
-            [(t.item(), str(int(60*sampling_rate/(t-sampling_rate)))+' bpm') for t in ticks if t>sampling_rate]
+            [(t.item(), str(int(60*sampling_rate/(t-sampling_rate)))) if t>sampling_rate else (t.item(), 'bpm') for t in ticks ]
             ])
         
     def setFontSize(self, size):
