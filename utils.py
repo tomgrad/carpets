@@ -19,7 +19,8 @@ def load_ishne(filename):
             'datetime': dt,
             'record_name': filename,
             'sig_len': len(record.lead[0].data),
-            'sig_name': [f'Lead {i+1}' for i in range(len(record.lead))]}
+            'sig_name': [f'Lead {i+1}' for i in range(len(record.lead))],
+            'rpeaks': None}
 
 
 def load_csv(filename):
@@ -34,12 +35,25 @@ def load_csv(filename):
             'n_sig': record.shape[0],
             'sig_len': record.shape[1],
             'sig_name': [f'Lead {i+1}' for i in range(record.shape[0])],
-            'record_name': filename}
+            'record_name': filename,
+            'rpeaks': None}
 
 
-def load_wfdb(filename):
+def load_wfdb(filename, ann = False):
     base_fn = filename[:-4]
     record = wfdb.rdrecord(base_fn)
+
+    if ann:
+        # check if annotation file exists (with .qrs or .atr extension)
+        if Path(base_fn + '.qrs').exists():
+            ann = wfdb.rdann(base_fn, 'qrs')
+        elif Path(base_fn + '.atr').exists():
+            ann = wfdb.rdann(base_fn, 'atr')
+        else:
+            ann = None
+    else:
+        ann = None
+
     try:
         dt = datetime(year=1980, month=5, day=2, hour=record.base_time.hour,
                       minute=record.base_time.minute, second=record.base_time.second)
@@ -51,7 +65,8 @@ def load_wfdb(filename):
             'sig_len': record.sig_len,
             'datetime': dt,
             'n_sig': record.n_sig,
-            'sig_name': record.sig_name}
+            'sig_name': record.sig_name,
+            'rpeaks': ann.sample if ann else None}
 
 
 def load_amedtec_ecgpro(filename):
@@ -76,6 +91,7 @@ def load_amedtec_ecgpro(filename):
         ecg = np.frombuffer(f.read(record['n_sig']*record['sig_len']*word_size), dtype=dt)
         ecg = ecg.reshape(-1, record['n_sig']) / int(LSBperMV)
         record['signal'] = ecg.T
+        record['rpeaks'] = None
     return record
 
 

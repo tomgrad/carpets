@@ -43,12 +43,6 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addWidget(self.normalRadioButton)
 
-        self.peaksRadioButton = QRadioButton(self.groupBox)
-        self.peaksRadioButton.setObjectName(u"peaksRadioButton")
-        self.peaksRadioButton.setEnabled(False)
-
-        self.verticalLayout.addWidget(self.peaksRadioButton)
-
         self.previewRadioButton = QRadioButton(self.groupBox)
         self.previewRadioButton.setObjectName(u"previewRadioButton")
 
@@ -59,12 +53,6 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addWidget(self.partialRadioButton)
 
-        self.rLeadSpinBox = QSpinBox(Dialog)
-        self.rLeadSpinBox.setObjectName(u"rLeadSpinBox")
-        self.rLeadSpinBox.setGeometry(QRect(310, 280, 42, 26))
-        self.label_2 = QLabel(Dialog)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setGeometry(QRect(310, 260, 54, 17))
         self.formLayoutWidget_2 = QWidget(Dialog)
         self.formLayoutWidget_2.setObjectName(u"formLayoutWidget_2")
         self.formLayoutWidget_2.setGeometry(QRect(30, 240, 241, 80))
@@ -108,10 +96,8 @@ class Ui_Dialog(object):
         self.durationLabel.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
         self.groupBox.setTitle(QCoreApplication.translate("Dialog", u"Import", None))
         self.normalRadioButton.setText(QCoreApplication.translate("Dialog", u"full import", None))
-        self.peaksRadioButton.setText(QCoreApplication.translate("Dialog", u"full import with R peaks (experimental)", None))
         self.previewRadioButton.setText(QCoreApplication.translate("Dialog", u"quick preview (one lead, downsampled)", None))
         self.partialRadioButton.setText(QCoreApplication.translate("Dialog", u"partial import", None))
-        self.label_2.setText(QCoreApplication.translate("Dialog", u"R lead", None))
         self.label.setText(QCoreApplication.translate("Dialog", u"Import only (HH)", None))
         self.label_3.setText(QCoreApplication.translate("Dialog", u"starting from (HH)", None))
     # retranslateUi

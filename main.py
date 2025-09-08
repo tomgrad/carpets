@@ -41,7 +41,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.carpetView.view.sigRangeChanged.connect(self._panSignal)
         self.rSourceLeadComboBox.currentIndexChanged.connect(self._update_rpeaks)
         self.exportImagePushButton.clicked.connect(self._export_image)
-        self.exportPeaksPushButton.clicked.connect(self._export_peaks)
+        # self.exportPeaksPushButton.clicked.connect(self._export_peaks)
         self.fixedHeightCheckBox.stateChanged.connect(self._set_limits)
         self.fixedHeightSpinBox.valueChanged.connect(lambda: self._set_limits(self.fixedHeightCheckBox.checkState().value))
         self.lineWidthSpinBox.valueChanged.connect(self.updateLineWidth)
@@ -62,6 +62,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.sampling_rate = record['sampling_rate']
         self.datetime = record['datetime']
         self.leads = record['leads']
+        self.ann = record['ann']
 
         status = f'{"/".join(Path(self.filename).parts[-2:])}\t{self.sampling_rate} Hz\t{self.leads} leads'
         status += f"\tStart: {str(self.datetime).split()[-1]}"
@@ -70,9 +71,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.statusLabel.setText(status)
 
         self.lead=0
-        self.rLead=record['rlead']
+
         self.left_off = self.sampling_rate
         self.right_off = 3*self.sampling_rate//2
+
+        if self.ann is not None:
+        # remove values less than left_off and more than sig_len - right_off from self.ann
+            self.ann = self.ann[(self.ann > self.left_off) & (self.ann < self.ecg.shape[1] - self.right_off)]
+            self.rpeaks.append(self.ann)
+            self.rLead=len(self.rpeaks)-1
+        else:
+            self.rLead=0
+
 
         if len(self.rpeaks[self.rLead]) == 0:   # if no R peaks are loaded
             self.rpeaks[self.rLead] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=self.rLead)
@@ -81,9 +91,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.rSourceLeadComboBox.blockSignals(True)
         self.leadComboBox.clear()
         self.rSourceLeadComboBox.clear()
+
         for label in record['sig_name']:
             self.leadComboBox.addItem(label)
             self.rSourceLeadComboBox.addItem(label)
+        if self.ann is not None:
+            self.rSourceLeadComboBox.addItem('Annotation')
         self.leadComboBox.blockSignals(False)
         self.rSourceLeadComboBox.setCurrentIndex(self.rLead)
         self.rSourceLeadComboBox.blockSignals(False)
@@ -94,11 +107,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.signalView.setXRange(0, self.ecg.shape[1] / self.sampling_rate)
         self._update_lead(self.lead, reset_range=True)
         self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, unit=self.xUnit)
-        self.exportPeaksPushButton.setEnabled(record['allow_export_peaks'])
     
     def _update_lead(self, lead, reset_range=False):
         self.lead = lead
-        rpeaks = self.rpeaks[self.rLead]
+        if self.rSourceLeadComboBox.currentText() == 'Annotation':
+            rpeaks = self.ann
+        else:
+            rpeaks = self.rpeaks[self.rLead]
         T = self.ecg.shape[1] / self.sampling_rate
         mn, mx = np.min(self.ecg[self.lead]), np.max(self.ecg[self.lead])
         p1, p2 = np.percentile(self.ecg[self.lead], [0.5, 99.5])
@@ -121,6 +136,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def _update_rpeaks(self):
         self.rLead = self.rSourceLeadComboBox.currentIndex()
+        # if self.ann is not None and self.rSourceLeadComboBox.currentIndex() == 0:
         if len(self.rpeaks[self.rLead]) == 0:
             self.rpeaks[self.rLead] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=self.rLead)
         self._update_lead(self.lead, reset_range=False)
@@ -191,18 +207,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             exporter.export(filename)
             print(f"Image saved to {filename}")
 
-    def _export_peaks(self):
-        name = str(Path(self.filename).with_suffix('.rpeaks'))
-        filename, _ = QFileDialog.getSaveFileName(self, "Save R peaks", name, "R peaks files (*.rpeaks);;All files (*)")
-        if filename:
-            print(f"Exporting R peaks to {filename}")
-            for i, rpeaks in enumerate(self.rpeaks):
-                if len(rpeaks) == 0:
-                    self.rpeaks[i] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=i)
-            with open(filename, 'w') as f:
-                for i, rpeaks in enumerate(self.rpeaks):
-                    f.write(f"\t".join(map(str, rpeaks)) + "\n")
-            print(f"Done.")
+    # def _export_peaks(self):
+    #     name = str(Path(self.filename).with_suffix('.rpeaks'))
+    #     filename, _ = QFileDialog.getSaveFileName(self, "Save R peaks", name, "R peaks files (*.rpeaks);;All files (*)")
+    #     if filename:
+    #         print(f"Exporting R peaks to {filename}")
+    #         for i, rpeaks in enumerate(self.rpeaks):
+    #             if len(rpeaks) == 0:
+    #                 self.rpeaks[i] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=i)
+    #         with open(filename, 'w') as f:
+    #             for i, rpeaks in enumerate(self.rpeaks):
+    #                 f.write(f"\t".join(map(str, rpeaks)) + "\n")
+    #         print(f"Done.")
 
     def updateLineWidth(self, value):
         plot = self.signalView.plotItem.items[0]  

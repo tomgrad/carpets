@@ -212,11 +212,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.exportImagePushButton)
 
-        self.exportPeaksPushButton = QPushButton(self.groupBox)
-        self.exportPeaksPushButton.setObjectName(u"exportPeaksPushButton")
-
-        self.verticalLayout.addWidget(self.exportPeaksPushButton)
-
 
         self.horizontalLayout.addWidget(self.groupBox)
 
@@ -263,6 +258,5 @@ class Ui_MainWindow(object):
         self.msRadioButton.setText(QCoreApplication.translate("MainWindow", u"ms", None))
         self.label_7.setText(QCoreApplication.translate("MainWindow", u"x scale units", None))
         self.exportImagePushButton.setText(QCoreApplication.translate("MainWindow", u"Export image", None))
-        self.exportPeaksPushButton.setText(QCoreApplication.translate("MainWindow", u"Export R peaks", None))
     # retranslateUi
 

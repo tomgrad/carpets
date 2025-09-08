@@ -66,16 +66,6 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="peaksRadioButton">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="text">
-       <string>full import with R peaks (experimental)</string>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QRadioButton" name="previewRadioButton">
       <property name="text">
        <string>quick preview (one lead, downsampled)</string>
@@ -90,29 +80,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QSpinBox" name="rLeadSpinBox">
-   <property name="geometry">
-    <rect>
-     <x>310</x>
-     <y>280</y>
-     <width>42</width>
-     <height>26</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>310</x>
-     <y>260</y>
-     <width>54</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>R lead</string>
-   </property>
   </widget>
   <widget class="QWidget" name="formLayoutWidget_2">
    <property name="geometry">
