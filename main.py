@@ -10,8 +10,8 @@ import utils
 from importer import ImportDialog
 from ui_mainwindow import Ui_MainWindow
 
-# pg.setConfigOption('background', 'k')
-# pg.setConfigOption('foreground', 'w')
+# pg.setConfigOption('background', 'w')
+# pg.setConfigOption('foreground', 'k')
 pg.setConfigOptions(antialias=True)
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -41,7 +41,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.carpetView.view.sigRangeChanged.connect(self._panSignal)
         self.rSourceLeadComboBox.currentIndexChanged.connect(self._update_rpeaks)
         self.exportImagePushButton.clicked.connect(self._export_image)
-        # self.exportPeaksPushButton.clicked.connect(self._export_peaks)
         self.fixedHeightCheckBox.stateChanged.connect(self._set_limits)
         self.fixedHeightSpinBox.valueChanged.connect(lambda: self._set_limits(self.fixedHeightCheckBox.checkState().value))
         self.lineWidthSpinBox.valueChanged.connect(self.updateLineWidth)
@@ -178,7 +177,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         totalSeconds = self.rpeaks[self.rLead][R]/self.sampling_rate
         return f"{datetime.timedelta(seconds=int(totalSeconds))}\n{R}RR"
     
-
     def _set_ms_unit(self):
         self.xUnit = 'ms'
         self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, unit='ms')
@@ -189,14 +187,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def _set_theme(self):
         theme = self.themeComboBox.currentText()
-        if theme == 'dark':
-            self.carpetView.getView().getViewWidget().setBackground('k')
-            self.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('#969696'))
-            self.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('#969696'))
-        elif theme == 'light':
-            self.carpetView.getView().getViewWidget().setBackground('w')
-            self.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('k'))
-            self.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('k'))
+        pen = pg.mkPen('#969696' if theme=='dark' else 'k')
+        bg = 'k' if theme=='dark' else 'w'
+
+        self.carpetView.getView().getViewWidget().setBackground(bg)
+        self.signalView.setBackground(bg)
+        self.carpetView.getView().getAxis('left').setTextPen(pen)
+        self.carpetView.getView().getAxis('bottom').setTextPen(pen)
+        self.carpetView.getHistogramWidget().setBackground('w' if theme=='light' else 'k')
+        self.carpetView.getHistogramWidget().axis.setTextPen(pen)
+        self.signalView.getAxis('left').setTextPen(pen)
+        self.signalView.getAxis('bottom').setTextPen(pen)
+        self.signalView.plotItem.items[0].setPen(pen)
 
     def _export_image(self):
         name = Path(self.filename).stem + f'_{self.lead}_{self.rLead}.png'
@@ -206,19 +208,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             exporter.parameters()['height'] = 1080
             exporter.export(filename)
             print(f"Image saved to {filename}")
-
-    # def _export_peaks(self):
-    #     name = str(Path(self.filename).with_suffix('.rpeaks'))
-    #     filename, _ = QFileDialog.getSaveFileName(self, "Save R peaks", name, "R peaks files (*.rpeaks);;All files (*)")
-    #     if filename:
-    #         print(f"Exporting R peaks to {filename}")
-    #         for i, rpeaks in enumerate(self.rpeaks):
-    #             if len(rpeaks) == 0:
-    #                 self.rpeaks[i] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=i)
-    #         with open(filename, 'w') as f:
-    #             for i, rpeaks in enumerate(self.rpeaks):
-    #                 f.write(f"\t".join(map(str, rpeaks)) + "\n")
-    #         print(f"Done.")
 
     def updateLineWidth(self, value):
         plot = self.signalView.plotItem.items[0]  
