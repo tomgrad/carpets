@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'mainwindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.2
+## Created by: Qt User Interface Compiler version 6.10.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -228,7 +228,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Dywaniki", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ECG Carpets", None))
         self.actionOpen_ECG.setText(QCoreApplication.translate("MainWindow", u"&Open ECG", None))
         self.actionQuit.setText(QCoreApplication.translate("MainWindow", u"&Quit", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Options", None))
