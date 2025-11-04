@@ -1,4 +1,4 @@
-# Carpets GUI
+# ECG Carpets
 
 ![](screenshot.png)
 

@@ -2,4 +2,4 @@ pyside6
 pyqtgraph
 neurokit2
 wfdb
-ishneholterlib
+# ishneholterlib

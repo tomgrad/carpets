@@ -10,8 +10,8 @@ import utils
 from importer import ImportDialog
 from ui_mainwindow import Ui_MainWindow
 
-# pg.setConfigOption('background', 'k')
-# pg.setConfigOption('foreground', 'w')
+# pg.setConfigOption('background', 'w')
+# pg.setConfigOption('foreground', 'k')
 pg.setConfigOptions(antialias=True)
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -29,6 +29,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.rpeaks = [np.array([])]
         self.rLead = 0
+        self.xUnit = 'ms'
         self.sampling_rate = 1
         self.statusLabel = QLabel("Open an ECG file to start")
         self.statusbar.addPermanentWidget(self.statusLabel)
@@ -40,11 +41,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.carpetView.view.sigRangeChanged.connect(self._panSignal)
         self.rSourceLeadComboBox.currentIndexChanged.connect(self._update_rpeaks)
         self.exportImagePushButton.clicked.connect(self._export_image)
-        self.exportPeaksPushButton.clicked.connect(self._export_peaks)
         self.fixedHeightCheckBox.stateChanged.connect(self._set_limits)
         self.fixedHeightSpinBox.valueChanged.connect(lambda: self._set_limits(self.fixedHeightCheckBox.checkState().value))
         self.lineWidthSpinBox.valueChanged.connect(self.updateLineWidth)
         self.autolevelsPushButton.clicked.connect(self._autolevels)
+        self.msRadioButton.toggled.connect(self._set_ms_unit)
+        self.bpmRadioButton.toggled.connect(self._set_bpm_unit)
 
     def _open_file(self, filename=False):
         importer = ImportDialog()
@@ -59,6 +61,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.sampling_rate = record['sampling_rate']
         self.datetime = record['datetime']
         self.leads = record['leads']
+        self.ann = record['ann']
 
         status = f'{"/".join(Path(self.filename).parts[-2:])}\t{self.sampling_rate} Hz\t{self.leads} leads'
         status += f"\tStart: {str(self.datetime).split()[-1]}"
@@ -67,9 +70,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.statusLabel.setText(status)
 
         self.lead=0
-        self.rLead=record['rlead']
+
         self.left_off = self.sampling_rate
         self.right_off = 3*self.sampling_rate//2
+
+        if self.ann is not None:
+        # remove values less than left_off and more than sig_len - right_off from self.ann
+            self.ann = self.ann[(self.ann > self.left_off) & (self.ann < self.ecg.shape[1] - self.right_off)]
+            self.rpeaks.append(self.ann)
+            self.rLead=len(self.rpeaks)-1
+        else:
+            self.rLead=0
+
 
         if len(self.rpeaks[self.rLead]) == 0:   # if no R peaks are loaded
             self.rpeaks[self.rLead] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=self.rLead)
@@ -78,9 +90,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.rSourceLeadComboBox.blockSignals(True)
         self.leadComboBox.clear()
         self.rSourceLeadComboBox.clear()
+
         for label in record['sig_name']:
             self.leadComboBox.addItem(label)
             self.rSourceLeadComboBox.addItem(label)
+        if self.ann is not None:
+            self.rSourceLeadComboBox.addItem('Annotation')
         self.leadComboBox.blockSignals(False)
         self.rSourceLeadComboBox.setCurrentIndex(self.rLead)
         self.rSourceLeadComboBox.blockSignals(False)
@@ -90,12 +105,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fixedHeightCheckBox.setChecked(False)
         self.signalView.setXRange(0, self.ecg.shape[1] / self.sampling_rate)
         self._update_lead(self.lead, reset_range=True)
-        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate)
-        self.exportPeaksPushButton.setEnabled(record['allow_export_peaks'])
+        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, unit=self.xUnit)
     
     def _update_lead(self, lead, reset_range=False):
         self.lead = lead
-        rpeaks = self.rpeaks[self.rLead]
+        if self.rSourceLeadComboBox.currentText() == 'Annotation':
+            rpeaks = self.ann
+        else:
+            rpeaks = self.rpeaks[self.rLead]
         T = self.ecg.shape[1] / self.sampling_rate
         mn, mx = np.min(self.ecg[self.lead]), np.max(self.ecg[self.lead])
         p1, p2 = np.percentile(self.ecg[self.lead], [0.5, 99.5])
@@ -118,6 +135,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def _update_rpeaks(self):
         self.rLead = self.rSourceLeadComboBox.currentIndex()
+        # if self.ann is not None and self.rSourceLeadComboBox.currentIndex() == 0:
         if len(self.rpeaks[self.rLead]) == 0:
             self.rpeaks[self.rLead] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=self.rLead)
         self._update_lead(self.lead, reset_range=False)
@@ -159,38 +177,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         totalSeconds = self.rpeaks[self.rLead][R]/self.sampling_rate
         return f"{datetime.timedelta(seconds=int(totalSeconds))}\n{R}RR"
     
+    def _set_ms_unit(self):
+        self.xUnit = 'ms'
+        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, unit='ms')
+
+    def _set_bpm_unit(self):
+        self.xUnit = 'bpm'
+        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, unit='bpm')
+    
     def _set_theme(self):
         theme = self.themeComboBox.currentText()
-        if theme == 'dark':
-            self.carpetView.getView().getViewWidget().setBackground('k')
-            self.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('#969696'))
-            self.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('#969696'))
-        elif theme == 'light':
-            self.carpetView.getView().getViewWidget().setBackground('w')
-            self.carpetView.getView().getAxis('left').setTextPen(pg.mkPen('k'))
-            self.carpetView.getView().getAxis('bottom').setTextPen(pg.mkPen('k'))
+        pen = pg.mkPen('#969696' if theme=='dark' else 'k')
+        bg = 'k' if theme=='dark' else 'w'
+
+        self.carpetView.getView().getViewWidget().setBackground(bg)
+        self.signalView.setBackground(bg)
+        self.carpetView.getView().getAxis('left').setTextPen(pen)
+        self.carpetView.getView().getAxis('bottom').setTextPen(pen)
+        self.carpetView.getHistogramWidget().setBackground('w' if theme=='light' else 'k')
+        self.carpetView.getHistogramWidget().axis.setTextPen(pen)
+        self.signalView.getAxis('left').setTextPen(pen)
+        self.signalView.getAxis('bottom').setTextPen(pen)
+        self.signalView.plotItem.items[0].setPen(pen)
 
     def _export_image(self):
-        name = Path(self.filename).stem + '.png'
+        name = Path(self.filename).stem + f'_{self.lead}_{self.rLead}.png'
         filename, _ = QFileDialog.getSaveFileName(self, "Save Image", name, "PNG files (*.png);;JPEG files (*.jpg);;All files (*)")
         if filename:
             exporter = exporters.ImageExporter(self.carpetView.view)
             exporter.parameters()['height'] = 1080
             exporter.export(filename)
             print(f"Image saved to {filename}")
-
-    def _export_peaks(self):
-        name = str(Path(self.filename).with_suffix('.rpeaks'))
-        filename, _ = QFileDialog.getSaveFileName(self, "Save R peaks", name, "R peaks files (*.rpeaks);;All files (*)")
-        if filename:
-            print(f"Exporting R peaks to {filename}")
-            for i, rpeaks in enumerate(self.rpeaks):
-                if len(rpeaks) == 0:
-                    self.rpeaks[i] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=i)
-            with open(filename, 'w') as f:
-                for i, rpeaks in enumerate(self.rpeaks):
-                    f.write(f"\t".join(map(str, rpeaks)) + "\n")
-            print(f"Done.")
 
     def updateLineWidth(self, value):
         plot = self.signalView.plotItem.items[0]  
