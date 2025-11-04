@@ -12,7 +12,7 @@ class ImportDialog(QDialog, Ui_Dialog):
         super().__init__(parent)
         self.setupUi(self)
         fn, _ = QFileDialog.getOpenFileName(self, "Open ECG", "",
-                                                       "ECG files (*.ecg *.hea *.dat *.ISHNE);;Ishne ECG (*.ecg *.ISHNE);;WFDB (MIT) ECG (*.hea);;AMEDTEC ECGPro (*.dat)"
+                                                       "WFDB (MIT) ECG (*.hea);;Ishne ECG (*.ecg *.ISHNE);;AMEDTEC ECGPro (*.dat);;ECG files (*.ecg *.hea *.dat *.ISHNE)"
                                                        )
         if fn:
             self.filename = fn
