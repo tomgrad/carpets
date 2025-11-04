@@ -1,6 +1,8 @@
 import pyqtgraph as pg
 import numpy as np
 
+xPad = 0.05
+
 class CarpetView(pg.ImageView):
     def __init__(self, parent=None):
         super().__init__(parent, view=pg.PlotItem())
@@ -42,9 +44,9 @@ class CarpetView(pg.ImageView):
         width, height = self.getImageItem().image.shape
 
         self.view.setLimits(
-                xMin=-0.1*width, xMax=1.1*width, 
-                minXRange=1.2*width, 
-                maxXRange=1.2*width, 
+                xMin=-xPad*width, xMax=(1.+xPad)*width, 
+                minXRange=(1.+2*xPad)*width, 
+                maxXRange=(1.+2*xPad)*width, 
                 yMin=-0.03*height, yMax=1.02*height, 
                 minYRange=5, maxYRange=1.05*height,
         )
@@ -53,14 +55,14 @@ class CarpetView(pg.ImageView):
         width, height = self.getImageItem().image.shape
 
         self.view.setLimits(
-                xMin=-0.1*width, xMax=1.1*width, 
-                minXRange=1.2*width, 
-                maxXRange=1.2*width, 
+                xMin=-xPad*width, xMax=(1.+xPad)*width, 
+                minXRange=(1.+2*xPad)*width, 
+                maxXRange=(1.+2*xPad)*width, 
                 yMin=-0.03*height, yMax=1.02*height, 
                 minYRange=5, maxYRange=1.05*height,
         )
         self.view.setRange(
-            xRange=[-0.1*width, 1.1*width], 
+            xRange=[-xPad*width, (1.+xPad)*width], 
             yRange=[-0.03*height, 1.02*height],
         )
 
