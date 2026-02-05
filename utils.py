@@ -100,6 +100,18 @@ def clean_ecg(ecg, sampling_rate):
     clean /= clean.std(axis=1, keepdims=True)
     return clean
 
+def detrend_ecg(ecg):
+    detrended = np.stack([nk.signal.signal_detrend(sig) for sig in ecg])
+    detrended /= detrended.std(axis=1, keepdims=True)
+    return detrended
+
+def filter_ecg(ecg, sampling_rate, lowcut=0.1, highcut=None):
+    filtered = np.stack([nk.signal.signal_filter(sig, sampling_rate=sampling_rate,
+                                                lowcut=lowcut, highcut=highcut, method='butterworth', order=5)
+                         for sig in ecg])
+    return filtered
+
+
 def get_rpeaks(ecg, sampling_rate, left_off, right_off, r_source_lead=0):
     _, rpeaks = nk.ecg_peaks(
         ecg[r_source_lead], sampling_rate=sampling_rate, method='neurokit')
