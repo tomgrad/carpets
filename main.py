@@ -1,5 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QLabel
+from PySide6.QtCore import Slot
 import pyqtgraph as pg
 from pyqtgraph import exporters
 import numpy as np
@@ -30,6 +31,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.rpeaks = [np.array([])]
         self.rLead = 0
         self.xUnit = 'ms'
+        self.xTicks = 6
         self.sampling_rate = 1
         self.statusLabel = QLabel("Open an ECG file to start")
         self.statusbar.addPermanentWidget(self.statusLabel)
@@ -47,6 +49,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.autolevelsPushButton.clicked.connect(self._autolevels)
         self.msRadioButton.toggled.connect(self._set_ms_unit)
         self.bpmRadioButton.toggled.connect(self._set_bpm_unit)
+        self.xTicksSpinBox.valueChanged.connect(self._set_x_ticks)
 
     def _open_file(self, filename=False):
         importer = ImportDialog()
@@ -74,14 +77,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.left_off = self.sampling_rate
         self.right_off = 3*self.sampling_rate//2
 
+        self.leftSpinBox.setValue(self.left_off/self.sampling_rate)
+        self.rightSpinBox.setValue(self.right_off/self.sampling_rate)
+
+        self.leftSpinBox.valueChanged.connect(self._set_left_offset)
+        self.rightSpinBox.valueChanged.connect(self._set_right_offset)
+
         if self.ann is not None:
         # remove values less than left_off and more than sig_len - right_off from self.ann
-            self.ann = self.ann[(self.ann > self.left_off) & (self.ann < self.ecg.shape[1] - self.right_off)]
+            # self.ann = self.ann[(self.ann > self.left_off) & (self.ann < self.ecg.shape[1] - self.right_off)]
             self.rpeaks.append(self.ann)
             self.rLead=len(self.rpeaks)-1
         else:
             self.rLead=0
-
 
         if len(self.rpeaks[self.rLead]) == 0:   # if no R peaks are loaded
             self.rpeaks[self.rLead] = utils.get_rpeaks(self.ecg, self.sampling_rate, self.left_off, self.right_off, r_source_lead=self.rLead)
@@ -168,6 +176,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         p1, p2 = np.percentile(self.ecg[self.lead], [p, 100-p])
         self.carpetView.setLevels(p1, p2)
 
+    @Slot(float)
+    def _set_left_offset(self, value):
+        self.left_off = int(value * self.sampling_rate)
+        self._update_lead(self.lead, reset_range=False)
+        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, num=self.xTicks, unit=self.xUnit)
+        self.carpetView.resetLimits()
+
+    @Slot(float)
+    def _set_right_offset(self, value):
+        self.right_off = int(value * self.sampling_rate)
+        self._update_lead(self.lead, reset_range=False)
+        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, num=self.xTicks, unit=self.xUnit)
+        self.carpetView.resetLimits()
+
+    @Slot(int)
+    def _set_x_ticks(self, value):
+        self.xTicks = value
+        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, num=self.xTicks, unit=self.xUnit)
+
     def RtoTime(self, R):
         if R < 0:
             return ""
@@ -179,11 +206,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def _set_ms_unit(self):
         self.xUnit = 'ms'
-        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, unit='ms')
+        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, num=self.xTicks, unit='ms')
 
     def _set_bpm_unit(self):
         self.xUnit = 'bpm'
-        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, unit='bpm')
+        self.carpetView.setXticks(self.left_off, self.right_off, self.sampling_rate, num=self.xTicks, unit='bpm')
     
     def _set_theme(self):
         theme = self.themeComboBox.currentText()

@@ -126,7 +126,7 @@ class Ui_MainWindow(object):
         self.label_7.setObjectName(u"label_7")
         self.label_7.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.formLayout.setWidget(7, QFormLayout.ItemRole.LabelRole, self.label_7)
+        self.formLayout.setWidget(8, QFormLayout.ItemRole.LabelRole, self.label_7)
 
         self.msRadioButton = QRadioButton(self.groupBox)
         self.buttonGroup = QButtonGroup(MainWindow)
@@ -135,22 +135,22 @@ class Ui_MainWindow(object):
         self.msRadioButton.setObjectName(u"msRadioButton")
         self.msRadioButton.setChecked(True)
 
-        self.formLayout.setWidget(7, QFormLayout.ItemRole.FieldRole, self.msRadioButton)
+        self.formLayout.setWidget(8, QFormLayout.ItemRole.FieldRole, self.msRadioButton)
 
         self.bpmRadioButton = QRadioButton(self.groupBox)
         self.buttonGroup.addButton(self.bpmRadioButton)
         self.bpmRadioButton.setObjectName(u"bpmRadioButton")
 
-        self.formLayout.setWidget(8, QFormLayout.ItemRole.FieldRole, self.bpmRadioButton)
+        self.formLayout.setWidget(9, QFormLayout.ItemRole.FieldRole, self.bpmRadioButton)
 
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.formLayout.setItem(9, QFormLayout.ItemRole.FieldRole, self.verticalSpacer)
+        self.formLayout.setItem(10, QFormLayout.ItemRole.FieldRole, self.verticalSpacer)
 
         self.label_2 = QLabel(self.groupBox)
         self.label_2.setObjectName(u"label_2")
 
-        self.formLayout.setWidget(10, QFormLayout.ItemRole.LabelRole, self.label_2)
+        self.formLayout.setWidget(11, QFormLayout.ItemRole.LabelRole, self.label_2)
 
         self.cmapComboBox = QComboBox(self.groupBox)
         self.cmapComboBox.addItem("")
@@ -161,12 +161,12 @@ class Ui_MainWindow(object):
         self.cmapComboBox.addItem("")
         self.cmapComboBox.setObjectName(u"cmapComboBox")
 
-        self.formLayout.setWidget(10, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
+        self.formLayout.setWidget(11, QFormLayout.ItemRole.FieldRole, self.cmapComboBox)
 
         self.label = QLabel(self.groupBox)
         self.label.setObjectName(u"label")
 
-        self.formLayout.setWidget(11, QFormLayout.ItemRole.LabelRole, self.label)
+        self.formLayout.setWidget(12, QFormLayout.ItemRole.LabelRole, self.label)
 
         self.fontSizeSpinBox = QSpinBox(self.groupBox)
         self.fontSizeSpinBox.setObjectName(u"fontSizeSpinBox")
@@ -174,35 +174,74 @@ class Ui_MainWindow(object):
         self.fontSizeSpinBox.setMaximum(36)
         self.fontSizeSpinBox.setValue(10)
 
-        self.formLayout.setWidget(11, QFormLayout.ItemRole.FieldRole, self.fontSizeSpinBox)
+        self.formLayout.setWidget(12, QFormLayout.ItemRole.FieldRole, self.fontSizeSpinBox)
 
         self.label_4 = QLabel(self.groupBox)
         self.label_4.setObjectName(u"label_4")
 
-        self.formLayout.setWidget(12, QFormLayout.ItemRole.LabelRole, self.label_4)
+        self.formLayout.setWidget(13, QFormLayout.ItemRole.LabelRole, self.label_4)
 
         self.themeComboBox = QComboBox(self.groupBox)
         self.themeComboBox.addItem("")
         self.themeComboBox.addItem("")
         self.themeComboBox.setObjectName(u"themeComboBox")
 
-        self.formLayout.setWidget(12, QFormLayout.ItemRole.FieldRole, self.themeComboBox)
+        self.formLayout.setWidget(13, QFormLayout.ItemRole.FieldRole, self.themeComboBox)
 
         self.label_6 = QLabel(self.groupBox)
         self.label_6.setObjectName(u"label_6")
 
-        self.formLayout.setWidget(13, QFormLayout.ItemRole.LabelRole, self.label_6)
+        self.formLayout.setWidget(14, QFormLayout.ItemRole.LabelRole, self.label_6)
 
         self.lineWidthSpinBox = QSpinBox(self.groupBox)
         self.lineWidthSpinBox.setObjectName(u"lineWidthSpinBox")
         self.lineWidthSpinBox.setMinimum(1)
         self.lineWidthSpinBox.setMaximum(5)
 
-        self.formLayout.setWidget(13, QFormLayout.ItemRole.FieldRole, self.lineWidthSpinBox)
+        self.formLayout.setWidget(14, QFormLayout.ItemRole.FieldRole, self.lineWidthSpinBox)
 
         self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.formLayout.setItem(6, QFormLayout.ItemRole.FieldRole, self.verticalSpacer_2)
+        self.formLayout.setItem(7, QFormLayout.ItemRole.FieldRole, self.verticalSpacer_2)
+
+        self.label_8 = QLabel(self.groupBox)
+        self.label_8.setObjectName(u"label_8")
+
+        self.formLayout.setWidget(5, QFormLayout.ItemRole.LabelRole, self.label_8)
+
+        self.label_9 = QLabel(self.groupBox)
+        self.label_9.setObjectName(u"label_9")
+
+        self.formLayout.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label_9)
+
+        self.leftSpinBox = QDoubleSpinBox(self.groupBox)
+        self.leftSpinBox.setObjectName(u"leftSpinBox")
+        self.leftSpinBox.setDecimals(1)
+        self.leftSpinBox.setMaximum(5.000000000000000)
+        self.leftSpinBox.setSingleStep(0.100000000000000)
+
+        self.formLayout.setWidget(5, QFormLayout.ItemRole.FieldRole, self.leftSpinBox)
+
+        self.rightSpinBox = QDoubleSpinBox(self.groupBox)
+        self.rightSpinBox.setObjectName(u"rightSpinBox")
+        self.rightSpinBox.setDecimals(1)
+        self.rightSpinBox.setMaximum(5.000000000000000)
+        self.rightSpinBox.setSingleStep(0.100000000000000)
+
+        self.formLayout.setWidget(6, QFormLayout.ItemRole.FieldRole, self.rightSpinBox)
+
+        self.xTicksSpinBox = QSpinBox(self.groupBox)
+        self.xTicksSpinBox.setObjectName(u"xTicksSpinBox")
+        self.xTicksSpinBox.setMinimum(2)
+        self.xTicksSpinBox.setMaximum(20)
+        self.xTicksSpinBox.setValue(6)
+
+        self.formLayout.setWidget(15, QFormLayout.ItemRole.FieldRole, self.xTicksSpinBox)
+
+        self.label_10 = QLabel(self.groupBox)
+        self.label_10.setObjectName(u"label_10")
+
+        self.formLayout.setWidget(15, QFormLayout.ItemRole.LabelRole, self.label_10)
 
 
         self.verticalLayout.addLayout(self.formLayout)
@@ -257,6 +296,9 @@ class Ui_MainWindow(object):
         self.themeComboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"light", None))
 
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"Line width", None))
+        self.label_8.setText(QCoreApplication.translate("MainWindow", u"left offset", None))
+        self.label_9.setText(QCoreApplication.translate("MainWindow", u"right offset", None))
+        self.label_10.setText(QCoreApplication.translate("MainWindow", u"num x ticks", None))
         self.exportImagePushButton.setText(QCoreApplication.translate("MainWindow", u"Export image", None))
     # retranslateUi
 
