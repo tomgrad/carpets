@@ -86,7 +86,11 @@ class ImportDialog(QDialog, Ui_Dialog):
             elif self.detrendRadioButton.isChecked():
                 ecg = utils.detrend_ecg(ecg)
             elif self.filterRadioButton.isChecked():
-                ecg = utils.filter_ecg(ecg, self.sampling_rate, lowcut=0.1)
+                ecg = utils.filter_ecg(ecg, self.sampling_rate, lowcut=self.lowcutSpinBox.value(), highcut=self.highcutSpinBox.value())
+            elif self.hpfRadioButton.isChecked():
+                ecg = utils.filter_ecg(ecg, self.sampling_rate, lowcut=self.lowcutSpinBox.value(), highcut=None)
+            elif self.lpfRadioButton.isChecked():
+                ecg = utils.filter_ecg(ecg, self.sampling_rate, lowcut=None, highcut=self.highcutSpinBox.value())
             
             result['ecg'] = ecg
             result['sampling_rate'] = self.sampling_rate

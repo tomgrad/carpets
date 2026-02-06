@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>377</width>
-    <height>410</height>
+    <width>350</width>
+    <height>380</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>370</y>
+     <x>170</x>
+     <y>340</y>
      <width>171</width>
      <height>32</height>
     </rect>
@@ -32,8 +32,8 @@
   <widget class="QLabel" name="durationLabel">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>40</y>
+     <x>10</x>
+     <y>10</y>
      <width>301</width>
      <height>17</height>
     </rect>
@@ -45,10 +45,10 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>70</y>
+     <x>10</x>
+     <y>30</y>
      <width>331</width>
-     <height>141</height>
+     <height>111</height>
     </rect>
    </property>
    <property name="title">
@@ -84,23 +84,13 @@
   <widget class="QWidget" name="formLayoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>240</y>
-     <width>191</width>
-     <height>80</height>
+     <x>150</x>
+     <y>150</y>
+     <width>190</width>
+     <height>171</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout_3">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="text">
-       <string>Import only (HH)</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="1">
      <widget class="QSpinBox" name="durationSpinBox">
       <property name="enabled">
@@ -125,15 +115,81 @@
       </property>
      </widget>
     </item>
+    <item row="2" column="1">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Orientation::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>lower cutoff</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QDoubleSpinBox" name="lowcutSpinBox">
+      <property name="decimals">
+       <number>1</number>
+      </property>
+      <property name="singleStep">
+       <double>0.100000000000000</double>
+      </property>
+      <property name="value">
+       <double>0.100000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>upper cutoff</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QDoubleSpinBox" name="highcutSpinBox">
+      <property name="decimals">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <double>250.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>10.000000000000000</double>
+      </property>
+      <property name="value">
+       <double>50.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="text">
+       <string>Import only (HH)</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>230</y>
+     <x>10</x>
+     <y>150</y>
      <width>131</width>
-     <height>131</height>
+     <height>171</height>
     </rect>
    </property>
    <property name="title">
@@ -160,7 +216,21 @@
     <item>
      <widget class="QRadioButton" name="filterRadioButton">
       <property name="text">
-       <string>0.1Hz cut</string>
+       <string>band-pass</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="hpfRadioButton">
+      <property name="text">
+       <string>high-pass</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="lpfRadioButton">
+      <property name="text">
+       <string>low-pass</string>
       </property>
      </widget>
     </item>
