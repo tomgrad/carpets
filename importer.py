@@ -81,7 +81,18 @@ class ImportDialog(QDialog, Ui_Dialog):
             else:
                 ecg = self.record['signal']
 
-            result['ecg'] = utils.clean_ecg(ecg, self.sampling_rate)
+            if self.cleanRadioButton.isChecked():
+                ecg = utils.clean_ecg(ecg, self.sampling_rate)
+            elif self.detrendRadioButton.isChecked():
+                ecg = utils.detrend_ecg(ecg)
+            elif self.filterRadioButton.isChecked():
+                ecg = utils.filter_ecg(ecg, self.sampling_rate, lowcut=self.lowcutSpinBox.value(), highcut=self.highcutSpinBox.value())
+            elif self.hpfRadioButton.isChecked():
+                ecg = utils.filter_ecg(ecg, self.sampling_rate, lowcut=self.lowcutSpinBox.value(), highcut=None)
+            elif self.lpfRadioButton.isChecked():
+                ecg = utils.filter_ecg(ecg, self.sampling_rate, lowcut=None, highcut=self.highcutSpinBox.value())
+            
+            result['ecg'] = ecg
             result['sampling_rate'] = self.sampling_rate
             result['datetime'] = self.datetime
             result['leads'] = self.leads
@@ -91,10 +102,8 @@ class ImportDialog(QDialog, Ui_Dialog):
             # result['rlead'] = self.rLeadSpinBox.value()
             result['ann'] = self.ann
             return result
-
         else:
             return None
-
 
 
 if __name__ == '__main__':

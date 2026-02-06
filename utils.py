@@ -100,15 +100,32 @@ def clean_ecg(ecg, sampling_rate):
     clean /= clean.std(axis=1, keepdims=True)
     return clean
 
+def detrend_ecg(ecg):
+    detrended = np.stack([nk.signal.signal_detrend(sig) for sig in ecg])
+    detrended /= detrended.std(axis=1, keepdims=True)
+    return detrended
+
+def filter_ecg(ecg, sampling_rate, lowcut=0.1, highcut=None):
+    filtered = np.stack([nk.signal.signal_filter(sig, sampling_rate=sampling_rate,
+                                                lowcut=lowcut, highcut=highcut, method='butterworth', order=5)
+                         for sig in ecg])
+    return filtered
+
+
 def get_rpeaks(ecg, sampling_rate, left_off, right_off, r_source_lead=0):
     _, rpeaks = nk.ecg_peaks(
         ecg[r_source_lead], sampling_rate=sampling_rate, method='neurokit')
     rpeaks = rpeaks['ECG_R_Peaks']
-    rpeaks = cut_rpeaks(rpeaks, left_off, right_off, ecg.shape[-1])
+    # rpeaks = cut_rpeaks(rpeaks, left_off, right_off, ecg.shape[-1])
     return rpeaks
 
 
 def make_carpet(ecg, rpeaks, first_r, beats=512, left_off=256, right_off=256):
+    if rpeaks[first_r] < left_off:
+        first_r = next(i for i, r in enumerate(rpeaks) if r > left_off)
+    beats = min(beats, len(rpeaks) - first_r)
+    if rpeaks[first_r+beats-1] > len(ecg) - right_off:
+        beats = next(i for i, r in enumerate(rpeaks[first_r:]) if r > len(ecg) - right_off)
     rp = rpeaks[first_r:first_r+beats]
     result = [ecg[r-left_off:r+right_off] for r in rp]
     return np.stack(result), rp
