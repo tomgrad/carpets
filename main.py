@@ -158,6 +158,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.carpetView.view.setLimits(minYRange=5, maxYRange=1.05*height)
 
     def _panSignal(self):
+        if len(self.rpeaks[self.rLead]) == 0:
+            return
         rpeaks = self.rpeaks[self.rLead]
         r_range = self.carpetView.view.viewRange()[1]
         r1, r2 = int(r_range[0]), int(r_range[1])
