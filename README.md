@@ -1,5 +1,9 @@
 # ECG Carpets
 
+
+Paper: [T. Gradowski, D. Waląg, T. Domański, T. Buchner: A novel method for analysis of transient morphological changes in quasiperiodic physiological signals and their neurogenic correlates (2026)](https://arxiv.org/abs/2602.19264)
+
+
 ![](screenshot.png)
 
 ## Requirements
